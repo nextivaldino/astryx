@@ -1,9 +1,15 @@
 {
   "name": "astryx-next",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.2",
   "private": true,
   "type": "module",
   "description": "Astryx-NEXT — estilo próprio de Ivaldino sobre o Astryx: tema comum + next-desktop e next-mobile.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nextivaldino/astryx.git",
+    "directory": "packages/astryx-next"
+  },
+  "homepage": "https://github.com/nextivaldino/astryx/tree/estilo-proprio/packages/astryx-next",
   "exports": {
     "./tema": "./tema/index.js",
     "./desktop": "./desktop/index.js",
@@ -17,5 +23,15 @@
     "@fontsource-variable/mona-sans": "^5.3.0",
     "react": ">=19"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "files": [
+    "tema",
+    "comum",
+    "desktop",
+    "mobile",
+    "formulario",
+    "atualizar.mjs",
+    "README.md",
+    "LICENSE"
+  ]
 }

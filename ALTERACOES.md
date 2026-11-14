@@ -28,6 +28,23 @@ Inspiração: **GNOME HIG / libadwaita** (paleta Adwaita, barras, listas em caix
 
 ---
 
+## 0.1.0-beta.2 — 14/11/2026 · usar o Astryx-NEXT em apps novas
+
+Torna o Astryx-NEXT fácil de usar em qualquer app futura, sem depender do fork estar disponível.
+Nenhuma mudança visual nos componentes. Ver [`packages/astryx-next/README.md`](packages/astryx-next/README.md).
+
+| O que mudou | Porquê | Tipo | Impacto | Quebra? |
+|---|---|---|---|---|
+| Assistente `criar/criar-app.mjs`: pergunta o nome, **se a app usa o visual Astryx-NEXT**, o tipo (mobile, desktop ou ambos), o modo (copiar/instalar) e se inicia o git; também aceita tudo por argumentos | Criar apps novas já com a base certa, sem copiar à mão | novo componente | todos | não |
+| Modelos `modelos/app-mobile` (next-mobile: entrar, dock, avatar, cartões, formulário, definições), `app-desktop` (next-desktop: barra da app, abas, menu com tema, barra de estado) e `app-base` (Astryx original, sem o visual) | Ponto de partida igual em todas as apps; os laboratórios Agenda e agenda-mobile ficam só para criar modelos | novo componente | todos | não |
+| Dois modos: **copiar** (pasta `astryx-next/` dentro do projeto; recomendado) e **instalar** (`.tgz` do lançamento no GitHub). O `vite.config.js` dos modelos trata dos dois | A app continua a instalar e a funcionar mesmo que o fork fique indisponível | novo componente | todos | não |
+| `atualizar.mjs` (`npm run visual:atualizar [versão]`): descarrega o pacote para uma pasta temporária, confirma-o, guarda a versão atual em `astryx-next-anterior/` e só depois troca; sem ligação não altera nada. Não usa a API do GitHub (sem limite de pedidos) | Atualizar o visual das apps com segurança e poder voltar atrás | novo componente | todos | não |
+| README do pacote e README gerado em cada app (diz se usa o visual, em que modo e como atualizar) | Documentar como usar e manter | documentação | todos | não |
+| `package.json`: campos `files`, `repository`, `homepage`; `LICENSE` (MIT, Meta) incluída no pacote | O pacote publicado leva só o necessário e mantém a licença | novo componente | todos | não |
+| Definições → Sobre o sistema mostra 0.1.0-beta.2 | Versão certa | código-fonte | todos | não |
+
+---
+
 ## 0.1.0-beta.1 — 14/11/2026 · primeira versão beta
 
 > Desenvolvido primeiro como `next-ds` (pasta à parte) e passado para este fork com o nome **Astryx-NEXT**.

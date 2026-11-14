@@ -1,0 +1,8 @@
+/* Layout das páginas da app; o visual vem do Astryx-NEXT. */
+body { margin: 0; }
+.app-entrar { min-block-size: 100dvh; display: grid; place-items: center; padding: 16px; box-sizing: border-box; }
+.app-entrar > * { inline-size: 100%; max-inline-size: 420px; }
+.app-pagina { padding: 20px 16px; }
+.app-inicio { display: grid; gap: 16px; max-inline-size: 1280px; margin-inline: auto; }
+.app-saudacao { margin: 0; font-size: var(--font-size-xl); font-weight: 650; }
+.app-largura { max-inline-size: 720px; margin-inline: auto; }

@@ -1,0 +1,9 @@
+{
+  "name": "{{TITULO}}",
+  "short_name": "{{TITULO}}",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fafafb",
+  "theme_color": "#fafafb"
+}
