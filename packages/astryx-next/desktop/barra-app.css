@@ -45,7 +45,7 @@
   font-weight: 650;
   color: var(--color-text-primary);
 }
-.ds-barra-app:hover { background: var(--color-overlay-hover); }
+@media (hover: hover) { .ds-barra-app:hover { background: var(--color-overlay-hover); } } /* só com rato: no toque o hover fica preso */
 .ds-barra-app[aria-expanded='true'] { background: var(--color-overlay-pressed); }
 .ds-barra-app:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 

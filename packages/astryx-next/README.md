@@ -25,6 +25,9 @@ transicao(() => setPagina('Definições'), 'frente'); // 'frente' · 'tras' · '
 A Dock e a BarraApp já o fazem sozinhas. Com "menos movimento" (sistema ou Definições → Reduzir efeitos), tudo
 muda logo, sem animar. Princípios inspirados em [transitions.dev](https://transitions.dev).
 
+**Toque:** em telemóvel e tablet, todos os botões têm uma área de toque de pelo menos 44px, os campos usam
+16px (o iPhone não amplia a página) e os realces de passar o rato só aparecem com rato (`tema/toque.css`).
+
 O registo de todas as mudanças está em [`ALTERACOES.md`](../../ALTERACOES.md), na raiz do fork.
 
 ---

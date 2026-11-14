@@ -41,7 +41,7 @@
   border-radius: 4px;
 }
 .nf-falta strong { color: var(--color-text-primary); }
-.nf-falta:hover strong { text-decoration: underline; }
+@media (hover: hover) { .nf-falta:hover strong { text-decoration: underline; } } /* só com rato: no toque o hover fica preso */
 .nf-falta:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 
 /* ── Secção ── */
@@ -118,7 +118,9 @@
   appearance: none;
 }
 textarea.nf-entrada { resize: none; field-sizing: content; min-block-size: 80px; max-block-size: 40vh; line-height: 1.45; }
+@media (hover: hover) {
 .nf-entrada:hover { box-shadow: inset 0 0 0 1px var(--color-text-secondary), inset 0 1px 2px light-dark(rgb(0 0 6 / 5%), rgb(0 0 0 / 30%)); }
+}
 .nf-entrada:focus { outline: none; box-shadow: inset 0 0 0 2px var(--color-accent), 0 0 0 4px var(--color-accent-muted); }
 .nf-campo[data-erro] .nf-entrada { box-shadow: inset 0 0 0 2px var(--color-text-error); }
 .nf-campo[data-valido] .nf-entrada:not(:focus) { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-success) 60%, transparent); }

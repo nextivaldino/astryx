@@ -233,7 +233,7 @@
 }
 .nm-canto-item-texto { flex: 1; font-size: var(--font-size-base); font-weight: 560; }
 .nm-canto-item > svg, .nm-canto-item > .astryx-icon { color: var(--color-text-secondary); }
-.nm-canto-item:hover { background: var(--color-overlay-hover); }
+@media (hover: hover) { .nm-canto-item:hover { background: var(--color-overlay-hover); } } /* só com rato: no toque o hover fica preso */
 .nm-canto-item:active { background: var(--color-overlay-pressed); }
 .nm-canto-item:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
 .nm-canto-item[data-perigo], .nm-canto-item[data-perigo] > svg, .nm-canto-item[data-perigo] > .astryx-icon { color: var(--color-text-error); }

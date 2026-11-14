@@ -197,7 +197,7 @@ function Aparencia({ aparencia, mudar, repor }) {
  * @param aparencia/mudar/repor  de useAparencia()
  * @param sistema     { nome, versao } para "Sobre o sistema"
  */
-export default function Definicoes({ onVoltar, seccoesApp = [], aparencia, mudar, repor, sistema = { nome: 'Astryx-NEXT', versao: '0.1.0-beta.3' } }) {
+export default function Definicoes({ onVoltar, seccoesApp = [], aparencia, mudar, repor, sistema = { nome: 'Astryx-NEXT', versao: '0.1.0-beta.4' } }) {
   const [vista, setVistaJa] = useState('raiz');
   const setVista = (v) => transicao(() => setVistaJa(v), v === 'raiz' ? 'tras' : 'frente');
 

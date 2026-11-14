@@ -28,6 +28,20 @@ Inspiração: **GNOME HIG / libadwaita** (paleta Adwaita, barras, listas em caix
 
 ---
 
+## 0.1.0-beta.4 — 14/11/2026 · toque
+
+Correções de usabilidade em ecrãs de toque, sem mudar o desenho. Regras inspiradas em
+[taste-skill](https://github.com/Leonxlnx/taste-skill) (Leonxlnx, MIT), medidas num telemóvel de 390px.
+
+| O que mudou | Porquê | Tipo | Impacto | Quebra? |
+|---|---|---|---|---|
+| `tema/toque.css`: em ecrãs de toque, botões do Astryx, avatar e "Falta:" ganham uma área de toque invisível de pelo menos 44 × 44px (antes 24–32px) | Acertar no botão à primeira (HIG da Apple e do GNOME) | tema | mobile · tablet | não |
+| Campos de texto a 16px em ecrãs de toque (antes 14px) | O iPhone ampliava a página ao tocar num campo | tema | mobile · tablet | não |
+| Efeitos de passar o rato (`:hover`) só com rato | No toque o realce ficava preso depois de tocar | tema | mobile · tablet | não |
+| Dock: separadores só com ícone com 44px de largura mínima (antes 40) | Alvo de toque mínimo | tema | mobile · tablet | não |
+
+---
+
 ## 0.1.0-beta.3 — 14/11/2026 · movimento fluido
 
 Uma escala de movimento comum e transições suaves em todo o sistema. Princípios inspirados em

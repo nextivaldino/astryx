@@ -44,7 +44,7 @@
   padding: 10px 16px;
 }
 button.nm-def-linha { cursor: pointer; }
-button.nm-def-linha:hover { background: var(--color-overlay-hover); }
+@media (hover: hover) { button.nm-def-linha:hover { background: var(--color-overlay-hover); } } /* só com rato: no toque o hover fica preso */
 button.nm-def-linha:active { background: var(--color-overlay-pressed); }
 button.nm-def-linha:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
 .nm-def-linha > svg, .nm-def-linha > .astryx-icon { color: var(--color-text-secondary); }

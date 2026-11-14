@@ -1,0 +1,20 @@
+/*
+ * Toque — ecrãs de toque (telemóvel, tablet). Nada muda no desenho:
+ *   - alvos de toque com pelo menos 44 × 44px (uma área invisível à volta
+ *     dos botões pequenos), como pedem as HIG da Apple e do GNOME;
+ *   - campos de texto a 16px: abaixo disso o iPhone amplia a página ao tocar.
+ * Regras de usabilidade inspiradas em taste-skill (Leonxlnx, MIT).
+ */
+@media (pointer: coarse) {
+  :is(.astryx-button, .astryx-toggle-button, .nm-canto-botao, .nf-falta) { position: relative; }
+  :is(.astryx-button, .astryx-toggle-button, .nm-canto-botao, .nf-falta)::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    inline-size: max(100%, 44px);
+    block-size: max(100%, 44px);
+  }
+  :is(input:not([type='checkbox'], [type='radio'], [type='range']), textarea, select) { font-size: 16px; }
+}
