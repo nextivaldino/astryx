@@ -28,6 +28,10 @@ muda logo, sem animar. Princípios inspirados em [transitions.dev](https://trans
 **Toque:** em telemóvel e tablet, todos os botões têm uma área de toque de pelo menos 44px, os campos usam
 16px (o iPhone não amplia a página) e os realces de passar o rato só aparecem com rato (`tema/toque.css`).
 
+**Padrão do fundo:** grelha, planta, pontos, linhas ou diagonal em traços de 1px, só no início ou em todas as
+páginas, e "avisos no fundo" (o fundo ganha a cor do aviso ativo). Tudo em Definições → Aparência. O "início" é a
+1.ª página da Dock/BarraApp; numa app sem elas, marca-o com `document.documentElement.toggleAttribute('data-no-inicio', true)`.
+
 O registo de todas as mudanças está em [`ALTERACOES.md`](../../ALTERACOES.md), na raiz do fork.
 
 ---

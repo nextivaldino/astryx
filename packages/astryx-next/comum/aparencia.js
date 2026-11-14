@@ -37,6 +37,24 @@ export const OPCOES = {
     { valor: 'mar', cor: '#007e7b', rotulo: 'Mar' },
     { valor: 'rosa', cor: '#c82d7c', rotulo: 'Rosa' },
   ],
+  // Padrão do fundo (tema/textura.css)
+  textura: [
+    { valor: 'nenhuma', rotulo: 'Nenhum' },
+    { valor: 'grelha', rotulo: 'Grelha' },
+    { valor: 'planta', rotulo: 'Planta' },
+    { valor: 'pontos', rotulo: 'Pontos' },
+    { valor: 'linhas', rotulo: 'Linhas' },
+    { valor: 'diagonal', rotulo: 'Diagonal' },
+  ],
+  texturaIntensidade: [
+    { valor: 'suave', rotulo: 'Suave' },
+    { valor: 'media', rotulo: 'Média' },
+    { valor: 'marcada', rotulo: 'Marcada' },
+  ],
+  texturaOnde: [
+    { valor: 'inicio', rotulo: 'Só no início' },
+    { valor: 'todas', rotulo: 'Em todas' },
+  ],
   formaBotoes: [
     { valor: 'arredondado', rotulo: 'Arredondados' },
     { valor: 'pilula', rotulo: 'Pílula' },
@@ -67,6 +85,7 @@ export const OPCOES = {
 
 export const PADRAO = {
   estilo: 'adwaita', modo: 'sistema', fundo: 'padrao', destaque: 'azul',
+  textura: 'nenhuma', texturaIntensidade: 'suave', texturaOnde: 'inicio', texturaAvisos: true,
   densidade: 'normal', formaBotoes: 'arredondado', ladoCriar: 'direita', nomesDock: 'frequentes', reduzirEfeitos: false,
   // Dock (Definições → Dock)
   dockTema: 'igual', dockMaterial: 'vidro', dockEncolher: true, dockEsconder: true,
@@ -107,7 +126,7 @@ export function lerAparencia() {
   for (const [k, lista] of Object.entries(OPCOES)) {
     if (lista.some((o) => o.valor === guardada[k])) a[k] = guardada[k];
   }
-  for (const k of ['reduzirEfeitos', 'dockEncolher', 'dockEsconder']) if (typeof guardada[k] === 'boolean') a[k] = guardada[k];
+  for (const k of ['reduzirEfeitos', 'dockEncolher', 'dockEsconder', 'texturaAvisos']) if (typeof guardada[k] === 'boolean') a[k] = guardada[k];
   if (RAPIDO.some((o) => o.valor === guardada.rapido)) a.rapido = guardada.rapido;
   return a;
 }
@@ -120,6 +139,10 @@ export function aplicarAparencia(guardada) {
   d.fundo = a.fundo;
   d.destaque = a.destaque;
   d.densidade = a.densidade;
+  d.textura = a.textura;
+  d.texturaIntensidade = a.texturaIntensidade;
+  d.texturaOnde = a.texturaOnde;
+  d.texturaAvisos = a.texturaAvisos ? 'sim' : 'nao';
   d.formaBotoes = a.formaBotoes;
   d.ladoCriar = a.ladoCriar;
   d.nomesDock = a.nomesDock;

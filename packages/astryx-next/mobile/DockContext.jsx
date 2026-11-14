@@ -37,6 +37,17 @@ export function DockProvider({ children }) {
 
   useEffect(() => () => clearTimeout(timerRapido.current), []);
 
+  // O aviso ativo (alerta rápido ou o último da ilha) pinta o fundo (tema/textura.css).
+  // Cada aviso novo volta a pulsar: alterna entre duas animações iguais.
+  const ativo = rapido ?? avisos.at(-1);
+  useEffect(() => {
+    const d = document.documentElement.dataset;
+    if (!ativo) { delete d.fundoAviso; delete d.fundoPulso; return; }
+    d.fundoAviso = ativo.tipo;
+    d.fundoPulso = d.fundoPulso === 'a' ? 'b' : 'a';
+  }, [ativo?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => () => { const d = document.documentElement.dataset; delete d.fundoAviso; delete d.fundoPulso; }, []);
+
   /** Tira os avisos da ilha (ao tocar nela) e devolve-os (espelho síncrono da fila). */
   const avisosRef = useRef(avisos);
   avisosRef.current = avisos;

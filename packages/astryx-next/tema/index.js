@@ -13,6 +13,7 @@ import './movimento.css';
 import './menus.css';
 import './volume.css';
 import './fechar.css';
+import './textura.css';
 import './toque.css';
 import './aparencia.css';
 import './menus.js';

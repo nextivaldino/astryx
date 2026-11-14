@@ -28,6 +28,22 @@ Inspiração: **GNOME HIG / libadwaita** (paleta Adwaita, barras, listas em caix
 
 ---
 
+## 0.1.0-beta.5 — 14/11/2026 · padrão do fundo
+
+Padrões finos para o fundo, sem degradês, escolhidos em **Definições → Aparência → Padrão do fundo**.
+
+| O que mudou | Porquê | Tipo | Impacto | Quebra? |
+|---|---|---|---|---|
+| `tema/textura.css`: padrões Grelha, Planta (grelha + linhas mestras), Pontos, Linhas e Diagonal, em traços de 1px na cor do texto | Dar carácter ao fundo sem distrair do conteúdo | tema | todos | não |
+| Intensidade (suave 5% · média 8% · marcada 12%) e onde mostrar (só no início · em todas) | Cada pessoa escolhe quanto quer ver | tema | todos | não |
+| Autoajustável: o passo da grelha acompanha a densidade (16–34px) e a largura do ecrã | Fica proporcional em telemóvel, tablet e desktop | tema | todos | não |
+| **Avisos no fundo**: enquanto há um aviso, o padrão ganha a cor dele (vermelho erro, âmbar atenção, verde sucesso, destaque info) e pulsa duas vezes ao chegar; sem padrão (ou fora do início), o fundo ganha um tom leve dessa cor. Desligável; botão "Experimentar" | O fundo também serve de sinal | código-fonte | todos | não |
+| Leve: uma só camada fixa por trás de tudo, desenhada uma vez (não se redesenha ao percorrer); cor e intensidade transitam só nessa camada (`@property`); sem pulsar com "Reduzir efeitos" | Não deixar o sistema lento | tema | todos | não |
+| A Dock e a BarraApp marcam `<html data-no-inicio>` na 1.ª página | Saber onde é o "início" sem código na app | código-fonte | todos | não |
+| Dock: a pílula volta a medir-se quando a faixa dos separadores muda (ex.: a ilha de aviso entra) | Corrige a pílula desalinhada no tablet | código-fonte | tablet | não |
+
+---
+
 ## 0.1.0-beta.4 — 14/11/2026 · toque
 
 Correções de usabilidade em ecrãs de toque, sem mudar o desenho. Regras inspiradas em

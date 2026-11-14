@@ -1,0 +1,97 @@
+/*
+ * Padrão do fundo — linhas finas sobre o fundo da app (Definições → Aparência).
+ *
+ *   data-textura            nenhuma · grelha · planta · pontos · linhas · diagonal
+ *   data-textura-intensidade suave · media · marcada
+ *   data-textura-onde        inicio (só na página inicial) · todas
+ *   data-textura-avisos      sim · nao  — o fundo ganha a cor de um aviso enquanto ele dura
+ *   data-no-inicio           posto pela Dock / BarraApp quando se está na 1.ª página
+ *   data-fundo-aviso         tipo do aviso ativo (DockProvider): erro · atencao · info · sucesso · mensagem
+ *
+ * Leve por desenho: é UMA camada fixa por trás de tudo (html::before), desenhada
+ * uma vez; ao percorrer não se redesenha. Cor e intensidade mudam só nessa camada
+ * (variáveis registadas com @property, para transitarem sem recalcular a página).
+ * Sem imagens nem degradês visíveis: só traços de 1px. O passo acompanha a
+ * densidade e o tamanho do ecrã (autoajustável).
+ */
+@property --tx-cor { syntax: '<color>'; inherits: false; initial-value: transparent; }
+@property --tx-alfa { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+
+:root { --tx-passo: clamp(20px, 0.6vw + 18px, 28px); }
+:root[data-densidade='compacta'] { --tx-passo: clamp(16px, 0.5vw + 14px, 22px); }
+:root[data-densidade='confortavel'] { --tx-passo: clamp(24px, 0.8vw + 21px, 34px); }
+
+:root::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  --tx-cor: var(--color-text-primary);
+  --tx-alfa: 5%;
+  --tx-l: color-mix(in srgb, var(--tx-cor) var(--tx-alfa), transparent);       /* traço */
+  --tx-forte: color-mix(in srgb, var(--tx-cor) calc(var(--tx-alfa) * 2.2), transparent); /* pontos, linhas mestras */
+  background-position: center;
+  opacity: 0;
+  transition: opacity var(--mov-painel-abrir, 400ms) var(--mov-suave, ease-out), --tx-cor 600ms ease-out, --tx-alfa 600ms ease-out;
+}
+:root[data-textura-intensidade='media']::before { --tx-alfa: 8%; }
+:root[data-textura-intensidade='marcada']::before { --tx-alfa: 12%; }
+
+/* Visível: em todas as páginas, ou só no início */
+:root:not([data-textura='nenhuma'])[data-textura-onde='todas']::before,
+:root:not([data-textura='nenhuma'])[data-textura-onde='inicio'][data-no-inicio]::before { opacity: 1; }
+
+/* ── Os padrões (também nas amostras das Definições) ── */
+:root[data-textura='grelha']::before, [data-amostra='textura-grelha'] {
+  background-image: linear-gradient(var(--tx-l) 1px, transparent 1px), linear-gradient(90deg, var(--tx-l) 1px, transparent 1px);
+  background-size: var(--tx-passo) var(--tx-passo);
+}
+/* Planta: grelha fina + uma linha mestra a cada 4 quadrados */
+:root[data-textura='planta']::before, [data-amostra='textura-planta'] {
+  background-image:
+    linear-gradient(var(--tx-forte) 1px, transparent 1px), linear-gradient(90deg, var(--tx-forte) 1px, transparent 1px),
+    linear-gradient(var(--tx-l) 1px, transparent 1px), linear-gradient(90deg, var(--tx-l) 1px, transparent 1px);
+  background-size: calc(var(--tx-passo) * 4) calc(var(--tx-passo) * 4), calc(var(--tx-passo) * 4) calc(var(--tx-passo) * 4), var(--tx-passo) var(--tx-passo), var(--tx-passo) var(--tx-passo);
+}
+:root[data-textura='pontos']::before, [data-amostra='textura-pontos'] {
+  background-image: radial-gradient(circle at 1px 1px, var(--tx-forte) 1px, transparent 1.5px);
+  background-size: var(--tx-passo) var(--tx-passo);
+}
+/* Linhas: pauta horizontal, como um caderno */
+:root[data-textura='linhas']::before, [data-amostra='textura-linhas'] {
+  background-image: linear-gradient(var(--tx-l) 1px, transparent 1px);
+  background-size: 100% var(--tx-passo);
+}
+:root[data-textura='diagonal']::before, [data-amostra='textura-diagonal'] {
+  background-image: repeating-linear-gradient(45deg, var(--tx-l) 0 1px, transparent 1px calc(var(--tx-passo) / 1.5));
+}
+
+/* ── Aviso: o fundo ganha a cor do aviso enquanto ele dura (pulsa ao chegar) ── */
+:root[data-textura-avisos='sim'][data-fundo-aviso]::before { opacity: 1; --tx-alfa: 8%; }
+:root[data-textura-avisos='sim'][data-fundo-aviso][data-textura-intensidade='marcada']::before { --tx-alfa: 13%; }
+/* sem padrão (ou fora do início), o aviso pinta o fundo de uma cor muito leve */
+:root[data-textura-avisos='sim'][data-fundo-aviso]:is([data-textura='nenhuma'], [data-textura-onde='inicio']:not([data-no-inicio]))::before {
+  background-image: none;
+  background-color: color-mix(in srgb, var(--tx-cor) var(--tx-alfa), transparent);
+}
+:root[data-textura-avisos='sim'][data-fundo-aviso='erro']::before { --tx-cor: var(--color-text-error); }
+:root[data-textura-avisos='sim'][data-fundo-aviso='atencao']::before { --tx-cor: var(--color-text-warning); }
+:root[data-textura-avisos='sim'][data-fundo-aviso='sucesso']::before { --tx-cor: var(--color-text-success); }
+:root[data-textura-avisos='sim']:is([data-fundo-aviso='info'], [data-fundo-aviso='mensagem'])::before { --tx-cor: var(--color-accent); }
+:root[data-textura-avisos='sim'][data-fundo-pulso='a']::before { animation: tx-pulso-a 1.2s ease-in-out 2; }
+:root[data-textura-avisos='sim'][data-fundo-pulso='b']::before { animation: tx-pulso-b 1.2s ease-in-out 2; }
+@keyframes tx-pulso-a { 50% { opacity: 0.45; } }
+@keyframes tx-pulso-b { 50% { opacity: 0.45; } }
+
+@media (prefers-reduced-motion: reduce) { :root::before { transition: none; animation: none !important; } }
+:root[data-reduzir-efeitos]::before { transition: none; animation: none !important; }
+
+/* Amostras (Definições): o padrão em miniatura sobre o fundo atual */
+[data-amostra^='textura-'] {
+  --tx-passo: 9px;
+  --tx-l: color-mix(in srgb, var(--color-text-primary) 22%, transparent);
+  --tx-forte: color-mix(in srgb, var(--color-text-primary) 45%, transparent);
+  background-color: var(--color-background-body);
+  background-position: center;
+}

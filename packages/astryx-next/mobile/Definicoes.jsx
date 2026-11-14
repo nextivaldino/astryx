@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { Button, Heading, Icon, SegmentedControl, SegmentedControlItem, Switch, Text } from '@astryxdesign/core';
 import { OPCOES } from '../comum/aparencia.js';
 import { transicao } from '../comum/index.js';
+import { useDock } from './DockContext.jsx';
 import { CasaIcone, MaisIcone, PaletaIcone, SinoIcone } from './icones.jsx';
 import './dock.css';
 import './definicoes.css';
@@ -139,6 +140,7 @@ function DefDock({ aparencia, mudar }) {
 }
 
 function Aparencia({ aparencia, mudar, repor }) {
+  const dock = useDock();
   const seg = (campo, rotulo) => (
     <SegmentedControl label={rotulo} value={aparencia[campo]} onChange={(v) => mudar({ [campo]: v })} layout="fill">
       {OPCOES[campo].map((o) => <SegmentedControlItem key={o.valor} value={o.valor} label={o.rotulo} />)}
@@ -169,6 +171,24 @@ function Aparencia({ aparencia, mudar, repor }) {
       <Amostras nome="fundo" rotulo="Fundo" opcoes={OPCOES.fundo} valor={aparencia.fundo} onChange={(v) => mudar({ fundo: v })} />
       <Amostras nome="destaque" rotulo="Cor de destaque" opcoes={OPCOES.destaque} valor={aparencia.destaque} onChange={(v) => mudar({ destaque: v })} />
 
+      <Amostras nome="textura" rotulo="Padrão do fundo" opcoes={OPCOES.textura} valor={aparencia.textura} onChange={(v) => mudar({ textura: v })} />
+      {aparencia.textura !== 'nenhuma' && (
+        <GrupoDef nota="Linhas finas por trás do conteúdo; o passo acompanha a densidade e o ecrã.">
+          <LinhaDef icone="eyeSlash" titulo="Intensidade" fim={null} />
+          <div className="nm-def-controlo">{seg('texturaIntensidade', 'Intensidade do padrão')}</div>
+          <LinhaDef icone={<CasaIcone />} titulo="Onde" sub="Na página inicial, ou em todas" fim={null} />
+          <div className="nm-def-controlo">{seg('texturaOnde', 'Onde mostrar o padrão')}</div>
+        </GrupoDef>
+      )}
+      <GrupoDef nota="Enquanto houver um aviso, o fundo ganha a cor dele: vermelho para erros, âmbar para atenção, verde para sucesso.">
+        <LinhaDef
+          icone={<SinoIcone />}
+          titulo="Avisos no fundo"
+          fim={<Switch label="Avisos no fundo" isLabelHidden value={aparencia.texturaAvisos} onChange={(v) => mudar({ texturaAvisos: v })} />}
+        />
+        {aparencia.texturaAvisos && <LinhaDef icone="info" titulo="Experimentar" sub="Mostra um aviso de exemplo" onClick={() => dock.aviso({ tipo: 'info', titulo: 'Assim fica um aviso' })} />}
+      </GrupoDef>
+
       <GrupoDef titulo="Forma dos botões">
         <div className="nm-def-controlo">{seg('formaBotoes', 'Forma dos botões')}</div>
       </GrupoDef>
@@ -197,7 +217,7 @@ function Aparencia({ aparencia, mudar, repor }) {
  * @param aparencia/mudar/repor  de useAparencia()
  * @param sistema     { nome, versao } para "Sobre o sistema"
  */
-export default function Definicoes({ onVoltar, seccoesApp = [], aparencia, mudar, repor, sistema = { nome: 'Astryx-NEXT', versao: '0.1.0-beta.4' } }) {
+export default function Definicoes({ onVoltar, seccoesApp = [], aparencia, mudar, repor, sistema = { nome: 'Astryx-NEXT', versao: '0.1.0-beta.5' } }) {
   const [vista, setVistaJa] = useState('raiz');
   const setVista = (v) => transicao(() => setVistaJa(v), v === 'raiz' ? 'tras' : 'frente');
 

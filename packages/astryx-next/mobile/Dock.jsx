@@ -142,6 +142,13 @@ export default function Dock({ paginas, ativa, onIr, paineis, separadorPainel = 
   // Ao abrir os avisos, ficam lidos.
   useEffect(() => { if (painel === 'avisos') dock.marcarLidos(); }, [painel]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // 1.ª página = início (o padrão do fundo pode aparecer só aqui)
+  const noInicio = ativa === paginas[0]?.valor;
+  useEffect(() => {
+    document.documentElement.toggleAttribute('data-no-inicio', noInicio);
+    return () => document.documentElement.removeAttribute('data-no-inicio');
+  }, [noInicio]);
+
   // Pílula do separador atual: uma só, que desliza de um separador para o outro.
   useLayoutEffect(() => {
     const caixa = separadores.current;
@@ -154,7 +161,9 @@ export default function Dock({ paginas, ativa, onIr, paineis, separadorPainel = 
       caixa.style.setProperty('--pilula-w', `${atual.offsetWidth}px`);
     };
     medir();
+    // mede de novo quando um separador muda de tamanho OU a faixa muda (ilha a entrar/sair desloca tudo)
     const ro = new ResizeObserver(medir);
+    ro.observe(caixa);
     caixa.querySelectorAll('.nm-separador').forEach((b) => ro.observe(b));
     return () => ro.disconnect();
   });

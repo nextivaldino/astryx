@@ -38,6 +38,12 @@ export default function BarraApp({
   const [aPesquisar, setAPesquisar] = useState(false);
   const irPara = (v) => v !== abaAtiva && transicao(() => onAbaChange(v), sentidoEntre(abas.map((a) => a.valor), abaAtiva, v));
   useEffect(() => gravarAberta(chave, aberta), [chave, aberta]);
+  // 1.ª aba = início (o padrão do fundo pode aparecer só aqui)
+  const noInicio = abaAtiva === abas[0]?.valor;
+  useEffect(() => {
+    document.documentElement.toggleAttribute('data-no-inicio', noInicio);
+    return () => document.documentElement.removeAttribute('data-no-inicio');
+  }, [noInicio]);
 
   const abasEl = abas.length > 0 && (
     <TabList value={abaAtiva} onChange={irPara} size="sm" overflow="scroll">
