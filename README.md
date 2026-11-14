@@ -1,3 +1,15 @@
+> **Este é o ramo `estilo-proprio` do fork, onde vive o [Astryx-NEXT](packages/astryx-next/README.md)**:
+> um design system para apps desktop (web/Electron) e mobile, construído sobre o Astryx.
+> Para criar uma app: `npx --yes --package=https://github.com/nextivaldino/astryx/releases/download/astryx-next-v1.0.0-beta.1/astryx-next-1.0.0-beta.1.tgz criar-astryx-next`
+>
+> Leitura:
+> - [Guia](packages/astryx-next/README.md)
+> - [Referência](packages/astryx-next/REFERENCIA.md)
+> - [Para IA](packages/astryx-next/AGENTS.md)
+> - [Alterações](ALTERACOES.md)
+>
+> O resto deste README é o original do Astryx (Meta), mantido sem alterações.
+
 <!-- SYNC CONTRACT: Architecture changes require documentation updates. -->
 
 <div align="center">

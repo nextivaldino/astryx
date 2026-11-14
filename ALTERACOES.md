@@ -28,6 +28,29 @@ Inspiração: **GNOME HIG / libadwaita** (paleta Adwaita, barras, listas em caix
 
 ---
 
+## 1.0.0-beta.1 — 14/11/2026 · primeira beta pública
+
+Primeira versão para outras pessoas (e assistentes de IA) usarem sem ajuda. Junta tudo das betas 0.1.0
+(tema, next-desktop, next-mobile, movimento, toque, padrão do fundo, mobile suave, janela de definições) e acrescenta
+o que faltava para ser usável de fora.
+
+> **Porquê 1.0.0-beta.1:** é a candidata à primeira versão estável. A API (componentes e propriedades documentados em
+> `REFERENCIA.md`) só muda se os testes da beta o pedirem, e cada mudança fica registada aqui.
+
+| O que mudou | Porquê | Tipo | Impacto | Quebra? |
+|---|---|---|---|---|
+| **Criar uma app sem clonar o fork:** `npx --package=<.tgz do lançamento> criar-astryx-next` (o pacote traz o assistente e os modelos; `bin` no `package.json`) | Qualquer pessoa começa com um só comando | novo componente | todos | não |
+| **`REFERENCIA.md`**: todos os componentes, propriedades, escolhas da aparência, tokens, classes e atributos | Saber usar sem ler o código | documentação | todos | não |
+| **`AGENTS.md` + `CLAUDE.md`** no pacote e em cada app criada: as regras para assistentes de IA construírem sempre com esta base (reutilizar, só tokens, arranque, avisos, formulários, definições, não alterar o sistema na app) | A IA que usar o sistema sabe que tem de partir dele | documentação | todos | não |
+| README do pacote reescrito como página de entrada pública; aviso no topo do README da raiz deste ramo | Quem chega ao fork encontra logo o Astryx-NEXT | documentação | todos | não |
+| `npm run testar` (`criar/testar.mjs`): cria as três apps modelo (mobile copiar, desktop instalar, base), instala e compila | Nenhum lançamento sai partido | novo componente | todos | não |
+| `astryx-next/electron` nas `exports` (também funciona no modo instalar) | A ponte do Electron importava-se só por caminho relativo | código-fonte | desktop | não |
+| `visual:atualizar` não copia o assistente nem os modelos para dentro das apps | O pacote passou a trazê-los | código-fonte | todos | não |
+| Versões mostradas em "Sobre" lidas do `package.json` | Deixam de ficar desatualizadas | código-fonte | todos | não |
+| `ASTRYX_NEXT_TGZ` no assistente: usar um `.tgz` local no modo instalar | Testar antes de publicar | novo componente | todos | não |
+
+---
+
 ## 0.1.0-beta.7 — 14/11/2026 · janela de definições (desktop/Electron)
 
 O next-desktop ganha a mesma personalização do mobile, numa **janela de definições flutuante** ao estilo do

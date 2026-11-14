@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 // Assistente para criar uma app nova (com ou sem o visual Astryx-NEXT).
 //
+// Sem clonar nada (a partir do lançamento no GitHub):
+//   npx --yes --package=https://github.com/nextivaldino/astryx/releases/download/astryx-next-v<versão>/astryx-next-<versão>.tgz criar-astryx-next
+// Com o fork clonado:
 //   node packages/astryx-next/criar/criar-app.mjs            → faz as perguntas
 //   node packages/astryx-next/criar/criar-app.mjs --nome loja --tipo mobile --visual sim --modo copiar
 //
@@ -23,7 +26,8 @@ import { fileURLToPath } from 'node:url';
 const REPO = 'nextivaldino/astryx';
 const pacote = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const { version: VERSAO } = JSON.parse(await readFile(join(pacote, 'package.json'), 'utf8'));
-const urlPacote = `https://github.com/${REPO}/releases/download/astryx-next-v${VERSAO}/astryx-next-${VERSAO}.tgz`;
+// ASTRYX_NEXT_TGZ: usar outro pacote no modo instalar (ex.: um .tgz local, nos testes antes de publicar)
+const urlPacote = process.env.ASTRYX_NEXT_TGZ ?? `https://github.com/${REPO}/releases/download/astryx-next-v${VERSAO}/astryx-next-${VERSAO}.tgz`;
 
 // ── Argumentos e perguntas ───────────────────────────────────────────────
 const args = {};
@@ -95,6 +99,9 @@ for (const app of apps) {
   }
 
   await writeFile(join(pasta, 'README.md'), readme(app));
+  // Instruções para assistentes de IA (Codex, Claude Code, Cursor…): constroem sempre com esta base
+  await writeFile(join(pasta, 'AGENTS.md'), agentes(app));
+  await writeFile(join(pasta, 'CLAUDE.md'), 'Lê e segue o [`AGENTS.md`](AGENTS.md) deste projeto.\n');
 
   if (git === 'sim') {
     try {
@@ -116,6 +123,38 @@ async function listar(dir) {
     if (e.isDirectory()) r.push(...(await listar(p))); else r.push(p);
   }
   return r;
+}
+
+function agentes(app) {
+  const regras = modo === 'copiar' ? 'astryx-next/AGENTS.md' : 'node_modules/astryx-next/AGENTS.md';
+  const ref = modo === 'copiar' ? 'astryx-next/REFERENCIA.md' : 'node_modules/astryx-next/REFERENCIA.md';
+  if (!modo) {
+    return `# Instruções para assistentes de IA — ${titulo}
+
+Esta app usa o **Astryx** original (\`@astryxdesign/core\`, tema neutral), **sem** o visual Astryx-NEXT.
+- Constrói a interface com os componentes do Astryx; não acrescentes outras bibliotecas de UI nem CSS de cores fixas.
+- Textos da interface em português de Portugal.
+`;
+  }
+  const estilo = app.modelo === 'app-mobile' ? 'next-mobile' : 'next-desktop';
+  return `# Instruções para assistentes de IA — ${titulo}
+
+Esta app é construída sobre o **design system Astryx-NEXT ${VERSAO}** (estilo **${estilo}**), modo **${modo}**.
+**Usa sempre esta base para construir tudo.** Antes de escrever código de interface, lê:
+
+1. [\`${regras}\`](${regras}) — as regras do sistema (obrigatório).
+2. [\`${ref}\`](${ref}) — a referência de todos os componentes e propriedades.
+
+Em resumo:
+- Começa sempre pelo que já existe: componentes do Astryx (\`@astryxdesign/core\`) e do Astryx-NEXT
+  (\`astryx-next/${app.modelo === 'app-mobile' ? 'mobile' : 'desktop'}\`, \`astryx-next/formulario\`, \`astryx-next/comum\`).
+  Não acrescentes outras bibliotecas de UI, de ícones ou de animação.
+- Nada de cores, raios, sombras, tamanhos de letra ou durações escritos à mão: usa os tokens (\`var(--color-*)\`,
+  \`var(--radius-*)\`, \`var(--mov-*)\`…). O tema (claro, escuro, alto contraste, densidade, destaque) depende disso.
+- Em \`src/app.css\` só se escreve o layout das páginas.
+- ${modo === 'copiar' ? 'Não alteres a pasta `astryx-next/`: é o sistema. Mudanças ao sistema fazem-se no fork e chegam com `npm run visual:atualizar`.' : 'O sistema vive em `node_modules/astryx-next`; não o alteres. Mudanças fazem-se no fork.'}
+- Textos da interface em português de Portugal.
+`;
 }
 
 function readme(app) {
@@ -182,6 +221,7 @@ ${visualTxt}
 ## Estrutura
 
 \`\`\`
+AGENTS.md        instruções para assistentes de IA (usar sempre esta base)
 src/main.jsx     arranque: importa o tema
 src/App.jsx      páginas de exemplo (troca pelas tuas)
 ${modo ? `src/app.css      layout das páginas\nsrc/sessao.js    sessão de exemplo (localStorage)\n` : ''}${modo === 'copiar' ? 'astryx-next/     o visual (não editar aqui; ver "Regras do visual")\n' : ''}\`\`\`

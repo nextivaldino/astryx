@@ -1,150 +1,148 @@
 # Astryx-NEXT
 
-O meu design system, construído sobre o [Astryx](https://github.com/facebook/astryx) 0.7.16 (Meta, MIT).
-É **a base visual de todas as minhas apps futuras**. Tem dois estilos sobre um tema comum:
+**Design system para apps desktop (web e Electron) e mobile**, construído sobre o
+[Astryx](https://github.com/facebook/astryx) 0.7.16 da Meta (MIT). Uma só base visual para todas as apps, com duas
+variantes da mesma família:
 
 | Estilo | Para | Peças principais |
 |---|---|---|
-| **next-desktop** | web e Electron | `BarraApp` (menu da app, abas, pesquisa, sub-barra), `BarraEstado` |
-| **next-mobile** | telemóvel e tablet | `Dock` (com ilha de avisos e bolha), `CantoUtilizador`, `CartaoInfo`/`GrelhaInfo`, `Definicoes` |
+| **next-desktop** | web e Electron | `BarraApp` (menu da app, abas, pesquisa, sub-barra), `BarraEstado`, `JanelaDefinicoes` (janela flutuante) |
+| **next-mobile** | telemóvel e tablet | `Dock` (ilha de avisos, painéis), `CantoUtilizador`, `CartaoInfo`/`GrelhaInfo`, `Definicoes` |
 
-Tudo partilha o **tema comum** (cores Adwaita/GNOME, tipografia KARGA com Mona Sans, raios, menus que desenrolam
-do botão, volume dos botões) e as **Definições → Aparência** (claro, escuro, alto contraste, densidade, cor de
-destaque, estilo Coral, fundos, botões em pílula, reduzir efeitos). O **formulário inteligente**
-(`Formulario`/`Seccao`/`Campo`) funciona nos dois estilos.
+Comum às duas:
+- **tema** com cores Adwaita (GNOME) e letra Mona Sans na escala KARGA, com claro, escuro, densidade, 8 cores de
+  destaque, 10 fundos, padrões de fundo e tamanho da interface;
+- **movimento** fluido (páginas que deslizam, pílula da dock que desliza, painéis suaves);
+- **formulário inteligente** (`Formulario`/`Seccao`/`Campo`);
+- **mobile mais suave**: no toque, os cantos arredondam, a letra passa a 16px e os controlos a 44px.
 
-**Movimento:** uma escala comum (`--mov-*`, em `tema/movimento.css`) e transições suaves — páginas que deslizam
-e cruzam com desfoque, a pílula da dock que desliza entre separadores, painéis que abrem e fecham sem saltos,
-campos que abanam quando falta algo. Para mudar de página com transição numa app:
+> **Beta pública.** A API pode ainda mudar antes da 1.0.0. Tudo o que muda fica em
+> [`ALTERACOES.md`](../../ALTERACOES.md).
 
-```js
-import { transicao } from 'astryx-next/comum';
-transicao(() => setPagina('Definições'), 'frente'); // 'frente' · 'tras' · 'troca'
-```
-
-A Dock e a BarraApp já o fazem sozinhas. Com "menos movimento" (sistema ou Definições → Reduzir efeitos), tudo
-muda logo, sem animar. Princípios inspirados em [transitions.dev](https://transitions.dev).
-
-**Toque:** em telemóvel e tablet, todos os botões têm uma área de toque de pelo menos 44px, os campos usam
-16px (o iPhone não amplia a página) e os realces de passar o rato só aparecem com rato (`tema/toque.css`).
-
-**Padrão do fundo:** grelha, planta, pontos, linhas ou diagonal em traços de 1px, só no início ou em todas as
-páginas, e "avisos no fundo" (o fundo ganha a cor do aviso ativo). Tudo em Definições → Aparência. O "início" é a
-1.ª página da Dock/BarraApp; numa app sem elas, marca-o com `document.documentElement.toggleAttribute('data-no-inicio', true)`.
-
-**Mobile mais suave:** em ecrãs de toque e até 640px, o mesmo sistema ganha cantos mais redondos, letra de 16px,
-controlos de 44px, superfícies sem contorno e campos preenchidos (`tema/mobile.css`). O desktop não muda — as duas
-versões são a mesma família.
-
-**Definições no desktop:** `JanelaDefinicoes` é uma janela flutuante (arrastar pela barra de título, redimensionar,
-duplo clique para maximizar, ⌘/Ctrl + , para abrir) com as mesmas escolhas do mobile, pesquisa e pré-visualização ao
-vivo. Num ecrã estreito ocupa o ecrã todo.
-
-```jsx
-const [aberta, setAberta] = useState(false);
-<JanelaDefinicoes aberta={aberta} onAbrir={() => setAberta(true)} onFechar={() => setAberta(false)}
-  aparencia={aparencia} mudar={mudar} repor={repor} app={{ nome: 'Agenda', versao: '1.0.0' }}
-  seccoesApp={[{ id: 'conta', titulo: 'Conta', icone: 'info', conteudo: <GrupoDef>…</GrupoDef> }]} />
-```
-
-**Electron:** para a barra de título nativa seguir o modo da app:
-
-```js
-import { BrowserWindow, ipcMain, nativeTheme } from 'electron';
-import { ligarAstryxNext, PRELOAD } from './astryx-next/electron/principal.js';
-const win = new BrowserWindow({ webPreferences: { preload: PRELOAD } });
-ligarAstryxNext(win, { ipcMain, nativeTheme });
-```
-
-O registo de todas as mudanças está em [`ALTERACOES.md`](../../ALTERACOES.md), na raiz do fork.
+📖 **Referência completa:** [`REFERENCIA.md`](REFERENCIA.md) · 🤖 **Para assistentes de IA:** [`AGENTS.md`](AGENTS.md)
 
 ---
 
-## Criar uma app nova
+## Começar: criar uma app
 
-No fork (branch `estilo-proprio`):
+Precisas do **Node 18+**. Não é preciso clonar nada:
 
 ```sh
-node packages/astryx-next/criar/criar-app.mjs
+npx --yes --package=https://github.com/nextivaldino/astryx/releases/download/astryx-next-v1.0.0-beta.1/astryx-next-1.0.0-beta.1.tgz criar-astryx-next
 ```
 
-O assistente pergunta:
+O assistente faz cinco perguntas:
 
 1. **Nome** da app.
-2. **Usar o visual Astryx-NEXT?** — *sim* ou *nao*. Com *nao*, a app usa o Astryx original (tema neutral).
-3. **Tipo** — `mobile` (next-mobile), `desktop` (next-desktop) ou `ambos` (cria `<nome>-mobile` e `<nome>-desktop`).
-4. **Como incluir o visual** — `copiar` (recomendado) ou `instalar` (ver abaixo).
+2. **Usar o visual Astryx-NEXT?** — *sim*, ou *nao* para uma app com o Astryx original.
+3. **Tipo** — `mobile`, `desktop` ou `ambos` (cria `<nome>-mobile` e `<nome>-desktop`).
+4. **Como incluir o visual** — `copiar` (recomendado) ou `instalar`.
 5. **Iniciar git?** — cria o repositório com o primeiro commit.
+
+Depois:
+
+```sh
+cd minha-app && npm install && npm run dev
+```
+
+A app criada traz três ficheiros de apoio:
+- `README.md`, que diz se usa o visual, em que modo e como o atualizar;
+- `AGENTS.md`, para que qualquer assistente de IA construa sempre com esta base;
+- `CLAUDE.md`.
 
 Também aceita tudo por argumentos, sem perguntas:
 
 ```sh
-node packages/astryx-next/criar/criar-app.mjs --nome loja --titulo "Loja" --visual sim --tipo mobile --modo copiar --destino ~/Development.
+npx --yes --package=<url do .tgz> criar-astryx-next --nome loja --titulo "Loja" --visual sim --tipo mobile --modo copiar --git sim --destino ~/Projetos
 ```
 
-Cada app criada traz o seu `README.md` a dizer se usa o visual, em que modo, e como o atualizar.
+Com o fork clonado, o mesmo assistente corre com `node packages/astryx-next/criar/criar-app.mjs`.
 
 ## Os dois modos
 
 | | **copiar** (recomendado) | **instalar** |
 |---|---|---|
 | Onde fica | pasta `astryx-next/` dentro do projeto | `node_modules/astryx-next`, a partir do lançamento no GitHub |
-| Se o fork ou o GitHub ficarem indisponíveis | **nada muda**: instala e funciona na mesma | a app instalada continua a funcionar; uma instalação limpa (`npm ci` noutro computador) falha |
-| Atualizar | `npm run visual:atualizar` (troca segura, com cópia da versão anterior) | `npm install <url do lançamento>` |
+| Se o fork ou o GitHub ficarem indisponíveis | **nada muda**: instala e funciona na mesma | a app instalada funciona; uma instalação limpa noutro computador falha |
+| Atualizar | `npm run visual:atualizar` | `npm install <url do lançamento>` |
 | Ideal para | apps a sério, que têm de durar | experiências rápidas |
 
-O `vite.config.js` das apps trata dos dois: se existir a pasta `astryx-next/`, usa-a; senão, usa o pacote instalado.
+O `vite.config.js` dos modelos trata dos dois: se existir a pasta `astryx-next/`, usa-a.
 
 ## Atualizar o visual numa app
 
 ```sh
-npm run visual:atualizar                              # a versão mais recente publicada (lançamentos do fork)
-npm run visual:atualizar -- 0.1.0-beta.2   # uma versão específica (também serve para voltar atrás)
+npm run visual:atualizar                   # a versão mais recente publicada
+npm run visual:atualizar -- 1.0.0-beta.1   # uma versão específica (também serve para voltar atrás)
 ```
 
 No modo copiar, o comando:
-
-1. descarrega o pacote dessa versão (o `.tgz` do lançamento no GitHub) para uma pasta temporária;
+1. descarrega o pacote para uma pasta temporária;
 2. confirma que é mesmo o Astryx-NEXT;
-3. guarda a versão atual em `astryx-next-anterior/` e só então troca.
+3. guarda a versão atual em `astryx-next-anterior/` e só depois troca.
 
-Se faltar a ligação, o fork estiver em baixo ou algo falhar a meio, **nada é alterado**. Para desfazer à mão:
-apaga `astryx-next/` e renomeia `astryx-next-anterior/` para `astryx-next/`.
+Sem ligação, ou com o fork em baixo, **nada é alterado**. Para desfazer: apaga `astryx-next/` e renomeia
+`astryx-next-anterior/`.
 
 ## Usar numa app que já existe
 
-1. Copia esta pasta (sem `modelos/` e `criar/`) para `astryx-next/` na raiz da app — ou instala o pacote.
-2. Instala as dependências que o Astryx-NEXT usa:
+1. Copia esta pasta para `astryx-next/` na raiz da app, sem `modelos/` e `criar/` (ou instala o `.tgz`).
+2. Instala as dependências:
    `npm install @astryxdesign/core@0.7.16 @astryxdesign/theme-neutral@0.7.16 @fontsource-variable/mona-sans @stylexjs/stylex`
 3. Copia o `vite.config.js` de [`modelos/app-mobile`](modelos/app-mobile/vite.config.js).
-4. No arranque (`main.jsx`), **antes** de qualquer outro CSS:
+4. Segue o [arranque](REFERENCIA.md#arranque) da referência: o tema primeiro, `aplicarAparenciaGuardada()`,
+   `<Theme>` + `<DockProvider>`.
 
-   ```js
-   import 'astryx-next/tema';
-   import { aplicarAparenciaGuardada } from 'astryx-next/comum';
-   aplicarAparenciaGuardada();
-   ```
+## Definições: as mesmas escolhas no mobile e no desktop
 
-5. Usa `useAparencia()` e `MODO_TEMA` no `<Theme>` (ver `modelos/app-mobile/src/App.jsx`).
+- **Mobile:** `<Definicoes>`, uma página com Aparência, Dock e Sobre, com miniatura ao vivo.
+- **Desktop/Electron:** `<JanelaDefinicoes>`, uma janela flutuante ao estilo do Opera:
+  - arrasta-se pela barra de título e redimensiona-se pelo canto;
+  - duplo clique maximiza; ⌘/Ctrl + , abre;
+  - tem barra lateral com pesquisa e pré-visualização ao vivo;
+  - lembra a posição.
+- As duas usam a mesma `useAparencia()`: uma escolha nova no sistema aparece nas duas.
 
-## O que o pacote exporta
+No **Electron**, a barra de título nativa segue o modo da app com duas linhas no processo principal (ver
+[`astryx-next/electron`](REFERENCIA.md#astryx-nextelectron)).
+
+## Exportações
 
 | Entrada | Conteúdo |
 |---|---|
-| `astryx-next/tema` | o tema comum (só CSS; importar primeiro) |
-| `astryx-next/comum` | `useAparencia`, `aplicarAparenciaGuardada`, `MODO_TEMA`, `useOnline`, `transicao`, `sentidoEntre`, `OPCOES`, `PADRAO` |
-| `astryx-next/desktop` | `BarraApp`, `BarraEstado`, `Estado` |
-| `astryx-next/mobile` | `Dock`, `DockProvider`, `useDock`, `OpcaoDock`, `CantoUtilizador`, `Definicoes`, `GrupoDef`, `LinhaDef`, `CartaoInfo`, `GrelhaInfo`, ícones |
+| `astryx-next/tema` | o tema (só CSS; importar primeiro) |
+| `astryx-next/comum` | `useAparencia`, `aplicarAparenciaGuardada`, `MODO_TEMA`, `transicao`, `useOnline`, `OPCOES`… |
+| `astryx-next/mobile` | `Dock`, `DockProvider`, `useDock`, `CantoUtilizador`, `CartaoInfo`, `GrelhaInfo`, `Definicoes`, `GrupoDef`, `LinhaDef`, `OpcaoDock`, ícones |
+| `astryx-next/desktop` | `BarraApp`, `BarraEstado`, `Estado`, `JanelaDefinicoes` |
 | `astryx-next/formulario` | `Formulario`, `Seccao`, `Campo` |
+| `astryx-next/electron` | `ligarAstryxNext`, `PRELOAD` |
 
-## Regras para mudar o sistema
+Detalhes de cada um em [`REFERENCIA.md`](REFERENCIA.md).
 
-- Ordem de preferência: **tema (variáveis CSS) → swizzle → código-fonte**.
-- Cada ajuste segue os tokens e ajusta os componentes que dependem dele.
-- Muda sempre aqui, no fork (branch `estilo-proprio`), e regista em `ALTERACOES.md` com versão (semver).
-- Publica: commit, etiqueta `astryx-next-v<versão>`, push e lançamento no GitHub com o `.tgz` do `npm pack`.
-  As apps recebem a mudança com `npm run visual:atualizar`.
+## Desempenho e acessibilidade
+
+- **Leve:**
+  - CSS e alguns componentes React, sem bibliotecas extra de animação ou UI;
+  - o padrão do fundo é uma só camada fixa;
+  - a janela de definições só existe enquanto está aberta.
+- **Movimento:** respeita "menos movimento" do sistema e a opção **Reduzir efeitos**.
+- **Toque:** áreas de 44px, campos de 16px (o iPhone não amplia) e realce de hover só com rato.
+- **Contraste:** cores com contraste AA nos dois modos.
+
+## Mudar o próprio sistema
+
+As regras estão em [`AGENTS.md`](AGENTS.md#se-estás-a-alterar-o-próprio-sistema-no-fork). Em resumo:
+- muda-se primeiro o tema (variáveis CSS);
+- tudo no ramo `estilo-proprio`, com registo em `ALTERACOES.md`;
+- `npm run testar` antes de publicar;
+- as apps recebem a mudança com `npm run visual:atualizar`.
 
 ## Licença
 
 MIT. Baseado no Astryx © Meta Platforms, Inc. — ver [`LICENSE`](LICENSE).
+
+Inspirado em:
+- GNOME HIG / libadwaita;
+- KARGA mobile;
+- [transitions.dev](https://transitions.dev) (princípios de movimento);
+- [taste-skill](https://github.com/Leonxlnx/taste-skill) (regras de toque).

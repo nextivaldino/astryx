@@ -56,6 +56,8 @@ async function main() {
     const nova = join(temporaria, 'package');
     const pj = JSON.parse(await readFile(join(nova, 'package.json'), 'utf8'));
     if (pj.name !== 'astryx-next' || pj.version !== alvo) throw new Error('o que foi descarregado não é o Astryx-NEXT pedido');
+    // o assistente e os modelos servem para criar apps; não ficam dentro de cada app
+    for (const pasta of ['criar', 'modelos']) await rm(join(nova, pasta), { recursive: true, force: true });
 
     // 3. Guarda a versão atual e troca (se a troca falhar, repõe)
     const anterior = join(dirname(aqui), 'astryx-next-anterior');
