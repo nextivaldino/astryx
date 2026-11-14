@@ -13,6 +13,18 @@ do botão, volume dos botões) e as **Definições → Aparência** (claro, escu
 destaque, estilo Coral, fundos, botões em pílula, reduzir efeitos). O **formulário inteligente**
 (`Formulario`/`Seccao`/`Campo`) funciona nos dois estilos.
 
+**Movimento:** uma escala comum (`--mov-*`, em `tema/movimento.css`) e transições suaves — páginas que deslizam
+e cruzam com desfoque, a pílula da dock que desliza entre separadores, painéis que abrem e fecham sem saltos,
+campos que abanam quando falta algo. Para mudar de página com transição numa app:
+
+```js
+import { transicao } from 'astryx-next/comum';
+transicao(() => setPagina('Definições'), 'frente'); // 'frente' · 'tras' · 'troca'
+```
+
+A Dock e a BarraApp já o fazem sozinhas. Com "menos movimento" (sistema ou Definições → Reduzir efeitos), tudo
+muda logo, sem animar. Princípios inspirados em [transitions.dev](https://transitions.dev).
+
 O registo de todas as mudanças está em [`ALTERACOES.md`](../../ALTERACOES.md), na raiz do fork.
 
 ---
@@ -55,7 +67,7 @@ O `vite.config.js` das apps trata dos dois: se existir a pasta `astryx-next/`, u
 ## Atualizar o visual numa app
 
 ```sh
-npm run visual:atualizar                              # a versão mais recente publicada
+npm run visual:atualizar                              # a versão mais recente publicada (lançamentos do fork)
 npm run visual:atualizar -- 0.1.0-beta.2   # uma versão específica (também serve para voltar atrás)
 ```
 
@@ -89,7 +101,7 @@ apaga `astryx-next/` e renomeia `astryx-next-anterior/` para `astryx-next/`.
 | Entrada | Conteúdo |
 |---|---|
 | `astryx-next/tema` | o tema comum (só CSS; importar primeiro) |
-| `astryx-next/comum` | `useAparencia`, `aplicarAparenciaGuardada`, `MODO_TEMA`, `useOnline`, `OPCOES`, `PADRAO` |
+| `astryx-next/comum` | `useAparencia`, `aplicarAparenciaGuardada`, `MODO_TEMA`, `useOnline`, `transicao`, `sentidoEntre`, `OPCOES`, `PADRAO` |
 | `astryx-next/desktop` | `BarraApp`, `BarraEstado`, `Estado` |
 | `astryx-next/mobile` | `Dock`, `DockProvider`, `useDock`, `OpcaoDock`, `CantoUtilizador`, `Definicoes`, `GrupoDef`, `LinhaDef`, `CartaoInfo`, `GrelhaInfo`, ícones |
 | `astryx-next/formulario` | `Formulario`, `Seccao`, `Campo` |

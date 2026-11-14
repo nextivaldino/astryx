@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Atualiza o Astryx-NEXT de um projeto.
 //
-//   npm run visual:atualizar                     → a versão mais recente (a da branch estilo-proprio)
+//   npm run visual:atualizar                     → a versão mais recente publicada (inclui betas)
 //   npm run visual:atualizar -- 0.1.0-beta.2     → uma versão específica (também serve para voltar atrás)
 //
 // Modo "copiar" (pasta astryx-next/ no projeto): descarrega o pacote do lançamento
@@ -18,7 +18,6 @@ import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO = 'nextivaldino/astryx';
-const RAMO = 'estilo-proprio';
 
 const aqui = dirname(fileURLToPath(import.meta.url));
 const instalado = basename(dirname(aqui)) === 'node_modules';
@@ -33,7 +32,10 @@ async function pedir(url) {
 async function main() {
   const atual = JSON.parse(await readFile(join(aqui, 'package.json'), 'utf8')).version;
   const pedida = process.argv[2]?.replace(/^astryx-next-v/, '');
-  const alvo = pedida ?? (await (await pedir(`https://raw.githubusercontent.com/${REPO}/${RAMO}/packages/astryx-next/package.json`)).json()).version;
+  // Mais recente = o último lançamento publicado (feed Atom: sem limite de pedidos, inclui betas)
+  const alvo = pedida ?? (await (await pedir(`https://github.com/${REPO}/releases.atom`)).text())
+    .match(/releases\/tag\/astryx-next-v([^"<]+)/)?.[1];
+  if (!alvo) throw new Error('não há nenhuma versão do Astryx-NEXT publicada no fork');
 
   if (instalado) {
     console.log(`Astryx-NEXT instalado como pacote (versão ${atual}). Para mudar para ${alvo}:\n\n  npm install ${urlPacote(alvo)}\n`);

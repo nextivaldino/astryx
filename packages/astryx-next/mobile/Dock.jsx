@@ -17,8 +17,9 @@
 // - encolhe ao percorrer para baixo; Esc / véu / arrastar o puxador fecham
 //
 // Estilos em dock.css (.nm-*). Usa os tokens do tema Astryx-NEXT.
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { Button, Icon } from '@astryxdesign/core';
+import { sentidoEntre, transicao } from '../comum/index.js';
 import { useDock } from './DockContext.jsx';
 import { MaisIcone, SinoIcone } from './icones.jsx';
 import './dock.css';
@@ -101,6 +102,11 @@ export default function Dock({ paginas, ativa, onIr, paineis, separadorPainel = 
 
   const painel = dock.painel && paineis[dock.painel] ? dock.painel : null;
   const aberto = painel !== null;
+  // Ao fechar, o conteúdo fica até o painel acabar de encolher (não fecha vazio)
+  const ultimoPainel = useRef(null);
+  if (painel) ultimoPainel.current = painel;
+  const mostrado = painel ?? (ultimoPainel.current && paineis[ultimoPainel.current] ? ultimoPainel.current : null);
+  const separadores = useRef(null);
   const porLer = dock.historico.filter((a) => !a.lido).length;
   const ultimo = dock.avisos.at(-1);
   // Dock cheia (telemóvel com 4+ separadores): o 🔔 sai e vira uma bolha à esquerda.
@@ -135,6 +141,23 @@ export default function Dock({ paginas, ativa, onIr, paineis, separadorPainel = 
 
   // Ao abrir os avisos, ficam lidos.
   useEffect(() => { if (painel === 'avisos') dock.marcarLidos(); }, [painel]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Pílula do separador atual: uma só, que desliza de um separador para o outro.
+  useLayoutEffect(() => {
+    const caixa = separadores.current;
+    if (!caixa) return;
+    const medir = () => {
+      const atual = caixa.querySelector('.nm-separador[data-atual]');
+      caixa.toggleAttribute('data-sem-pilula', !atual);
+      if (!atual) return;
+      caixa.style.setProperty('--pilula-x', `${atual.offsetLeft}px`);
+      caixa.style.setProperty('--pilula-w', `${atual.offsetWidth}px`);
+    };
+    medir();
+    const ro = new ResizeObserver(medir);
+    caixa.querySelectorAll('.nm-separador').forEach((b) => ro.observe(b));
+    return () => ro.disconnect();
+  });
 
   const alternar = (nome) => (painel === nome ? dock.fechar() : dock.abrir(nome));
 
@@ -180,14 +203,14 @@ export default function Dock({ paginas, ativa, onIr, paineis, separadorPainel = 
           inert={!aberto || undefined}
         >
           <div className="nm-painel-dentro">
-            {aberto && (
+            {mostrado && (
               <>
                 <div className="nm-painel-topo">
                   <span className="nm-puxador" aria-hidden="true" {...puxador} />
-                  <h2 className="nm-painel-titulo">{paineis[painel].rotulo}</h2>
+                  <h2 className="nm-painel-titulo">{paineis[mostrado].rotulo}</h2>
                   <Button variant="ghost" size="sm" label="Fechar" isIconOnly icon={<Icon icon="close" />} onClick={dock.fechar} />
                 </div>
-                <div key={painel} className="nm-painel-corpo">{paineis[painel].conteudo}</div>
+                <div key={mostrado} className="nm-painel-corpo">{paineis[mostrado].conteudo}</div>
               </>
             )}
           </div>
@@ -230,7 +253,8 @@ export default function Dock({ paginas, ativa, onIr, paineis, separadorPainel = 
             </div>
           )}
 
-          <div className="nm-separadores">
+          <div className="nm-separadores" ref={separadores}>
+            <span className="nm-pilula" aria-hidden="true" />
             {paginas.map((p) => {
               const nomePainel = separadorPainel[p.valor];
               const atual = nomePainel ? painel === nomePainel : ativa === p.valor && !aberto;
@@ -248,7 +272,7 @@ export default function Dock({ paginas, ativa, onIr, paineis, separadorPainel = 
                     contar(p.valor);
                     if (nomePainel) return alternar(nomePainel);
                     dock.fechar();
-                    onIr(p.valor);
+                    if (p.valor !== ativa) transicao(() => onIr(p.valor), sentidoEntre(paginas.map((x) => x.valor), ativa, p.valor));
                   }}
                 >
                   {typeof p.icone === 'string' ? <Icon icon={p.icone} /> : p.icone}

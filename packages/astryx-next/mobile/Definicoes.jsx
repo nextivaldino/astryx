@@ -11,6 +11,7 @@
 import { useState } from 'react';
 import { Button, Heading, Icon, SegmentedControl, SegmentedControlItem, Switch, Text } from '@astryxdesign/core';
 import { OPCOES } from '../comum/aparencia.js';
+import { transicao } from '../comum/index.js';
 import { CasaIcone, MaisIcone, PaletaIcone, SinoIcone } from './icones.jsx';
 import './dock.css';
 import './definicoes.css';
@@ -196,8 +197,9 @@ function Aparencia({ aparencia, mudar, repor }) {
  * @param aparencia/mudar/repor  de useAparencia()
  * @param sistema     { nome, versao } para "Sobre o sistema"
  */
-export default function Definicoes({ onVoltar, seccoesApp = [], aparencia, mudar, repor, sistema = { nome: 'Astryx-NEXT', versao: '0.1.0-beta.2' } }) {
-  const [vista, setVista] = useState('raiz');
+export default function Definicoes({ onVoltar, seccoesApp = [], aparencia, mudar, repor, sistema = { nome: 'Astryx-NEXT', versao: '0.1.0-beta.3' } }) {
+  const [vista, setVistaJa] = useState('raiz');
+  const setVista = (v) => transicao(() => setVistaJa(v), v === 'raiz' ? 'tras' : 'frente');
 
   if (vista === 'aparencia') {
     return (

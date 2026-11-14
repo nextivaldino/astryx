@@ -1,0 +1,91 @@
+/*
+ * Movimento — a escala de movimento comum do Astryx-NEXT.
+ *
+ * Princípios (inspirados em transitions.dev, de Jakub Antalik):
+ *   - Uma só curva para quase tudo: arranca depressa e assenta devagar.
+ *   - Abrir é mais lento do que fechar (quem fecha já quer seguir).
+ *   - Distâncias curtas, escala quase 1 e um desfoque leve: o olho lê
+ *     "movimento" sem que nada salte nem viaje pelo ecrã.
+ *   - Sempre com saída para quem pede menos movimento (sistema ou
+ *     Definições → Reduzir efeitos).
+ *
+ * Os componentes do Astryx já animam com os seus tokens (--duration-*,
+ * --ease-*); aqui só se afinam as curvas, para tudo mexer da mesma maneira.
+ */
+:root {
+  /* Durações */
+  --mov-escalonar: 40ms;   /* atraso entre itens seguidos */
+  --mov-micro: 80ms;
+  --mov-fechar: 150ms;     /* menus, diálogos e textos a sair */
+  --mov-abrir: 250ms;      /* menus, diálogos, páginas, separadores */
+  --mov-painel-fechar: 350ms;
+  --mov-painel-abrir: 400ms;
+  --mov-enfase: 500ms;     /* momentos de destaque (confirmações) */
+  /* Curvas */
+  --mov-suave: cubic-bezier(0.22, 1, 0.36, 1);  /* abrir, fechar, deslizar, redimensionar */
+  --mov-mola: cubic-bezier(0.34, 1.36, 0.64, 1); /* aparecer com um pequeno salto (ilha, selos) */
+  /* Distâncias, escalas, desfoque */
+  --mov-perto: 4px;
+  --mov-distancia: 8px;
+  --mov-longe: 16px;
+  --mov-escala: 0.97;
+  --mov-desfoque: 2px;
+  --mov-desfoque-pagina: 3px;
+
+  /* Afinação do Astryx: as mesmas curvas; a saída mais curta do que a entrada */
+  --ease-standard: var(--mov-suave);
+  --ease-entrance: var(--mov-suave);
+  --ease-move: var(--mov-suave);
+  --duration-exit: var(--mov-fechar);
+}
+
+/* ══ Transição entre páginas (View Transitions; ver transicao() em comum) ══
+   A página desliza um pouco para o lado da navegação e cruza com desfoque.
+   As barras fixas (dock, barra da app, barra de estado) ficam paradas. */
+.nm-dock { view-transition-name: nm-dock; }
+.nm-bolha { view-transition-name: nm-bolha; }
+.ds-barra { view-transition-name: ds-barra; }
+.ds-barra-fundo { view-transition-name: ds-barra-fundo; }
+.ds-estado { view-transition-name: ds-estado; }
+/* As barras não cruzam: mostram logo o estado novo, que anima por si (a pílula da dock desliza) */
+:is(::view-transition-old(nm-dock), ::view-transition-old(nm-bolha), ::view-transition-old(ds-barra), ::view-transition-old(ds-barra-fundo), ::view-transition-old(ds-estado)) { display: none; }
+:is(::view-transition-new(nm-dock), ::view-transition-new(nm-bolha), ::view-transition-new(ds-barra), ::view-transition-new(ds-barra-fundo), ::view-transition-new(ds-estado)) { animation: none; }
+:is(::view-transition-group(nm-dock), ::view-transition-group(nm-bolha), ::view-transition-group(ds-barra), ::view-transition-group(ds-barra-fundo), ::view-transition-group(ds-estado)) { animation-duration: 0s; }
+
+::view-transition-old(root) { animation: mov-pagina-sai var(--mov-fechar) var(--mov-suave) both; }
+::view-transition-new(root) { animation: mov-pagina-entra var(--mov-abrir) var(--mov-suave) both; }
+:root { --_mov-lado: 0; }
+:root[data-transicao='frente'] { --_mov-lado: 1; }
+:root[data-transicao='tras'] { --_mov-lado: -1; }
+@keyframes mov-pagina-sai {
+  to { opacity: 0; translate: calc(var(--_mov-lado) * -1 * var(--mov-distancia)) 0; filter: blur(var(--mov-desfoque-pagina)); }
+}
+@keyframes mov-pagina-entra {
+  from { opacity: 0; translate: calc(var(--_mov-lado) * var(--mov-distancia)) 0; filter: blur(var(--mov-desfoque-pagina)); }
+}
+
+/* ══ Peças reutilizáveis ══ */
+/* Entrar: sobe um pouco, ganha nitidez */
+@keyframes mov-entra {
+  from { opacity: 0; translate: 0 var(--mov-distancia); filter: blur(var(--mov-desfoque)); }
+}
+/* Trocar um valor no sítio (números, estados): cruza com desfoque, sem andar */
+@keyframes mov-troca {
+  from { opacity: 0; filter: blur(var(--mov-desfoque)); }
+}
+/* Erro: abana para os lados e assenta */
+@keyframes mov-tremer {
+  0%, 100% { translate: 0; }
+  15% { translate: calc(-1 * var(--mov-distancia)) 0; }
+  35% { translate: 6px 0; }
+  55% { translate: -4px 0; }
+  75% { translate: 2px 0; }
+}
+
+/* ══ Menos movimento ══ */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+:root[data-reduzir-efeitos]::view-transition-group(*),
+:root[data-reduzir-efeitos]::view-transition-old(*),
+:root[data-reduzir-efeitos]::view-transition-new(*) { animation: none !important; }

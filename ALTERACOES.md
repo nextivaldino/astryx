@@ -28,6 +28,29 @@ Inspiração: **GNOME HIG / libadwaita** (paleta Adwaita, barras, listas em caix
 
 ---
 
+## 0.1.0-beta.3 — 14/11/2026 · movimento fluido
+
+Uma escala de movimento comum e transições suaves em todo o sistema. Princípios inspirados em
+[transitions.dev](https://transitions.dev) (Jakub Antalik): uma só curva que arranca depressa e assenta devagar,
+abrir mais lento do que fechar, distâncias curtas, escala quase 1 e desfoque leve. Implementação própria (sem
+copiar a biblioteca; a licença dela não permite redistribuí-la). Sempre desligado com "menos movimento" do
+sistema ou Definições → Reduzir efeitos.
+
+| O que mudou | Porquê | Tipo | Impacto | Quebra? |
+|---|---|---|---|---|
+| `tema/movimento.css`: tokens `--mov-*` (durações 150/250/350/400/500ms, curvas `--mov-suave` e `--mov-mola`, distâncias, escala, desfoque) | Tudo mexe da mesma maneira; um só sítio para afinar | tema | todos | não |
+| Curvas do Astryx (`--ease-standard/entrance/move`) passam a `--mov-suave`; `--duration-exit` 150ms | Diálogos, menus e popovers do Astryx com o mesmo ritmo; fechar mais rápido | tema | todos | não |
+| **Transição entre páginas** (View Transitions): a página desliza 8px para o lado da navegação e cruza com desfoque; dock, barra da app e barra de estado ficam paradas. `transicao(mudar, sentido)` e `sentidoEntre()` em `astryx-next/comum` | Mudar de página deixa de "saltar" | novo componente | todos | não |
+| Dock e BarraApp usam a transição ao mudar de separador/aba (frente ou trás conforme a posição); Definições ao entrar e sair das sub-páginas; os modelos ao abrir/fechar as Definições | Navegação fluida sem código extra nas apps | código-fonte | todos | não |
+| Dock: **uma só pílula** que desliza entre separadores e ajusta a largura; o texto muda de cor ao mesmo ritmo | Ver para onde se foi | código-fonte | mobile · tablet | não |
+| Dock: o painel abre em 400ms e fecha em 350ms; o conteúdo sobe com desfoque ao abrir (e ao passar de um painel para outro) e **continua visível enquanto o painel fecha** (antes ficava vazio de repente) | Painel fluido nos dois sentidos | código-fonte | mobile · tablet | não |
+| Ilha, bolha e 🔔: mola mais suave (`--mov-mola`) e entrada com desfoque | Saltos menos bruscos | tema | mobile · tablet | não |
+| Formulário: ao guardar com obrigatórios em falta, o campo **abana e assenta** antes de receber o foco | Mostrar onde está o problema | código-fonte | todos | não |
+| CartaoInfo: quando o valor muda, cruza com desfoque no sítio | Números que mudam sem saltar | código-fonte | todos | não |
+| `visual:atualizar`: a "versão mais recente" vem do feed de lançamentos (sem a API do GitHub, que limita os pedidos, nem cache) | Atualizar funcionava mal com muitos pedidos ou logo após publicar | código-fonte | todos | não |
+
+---
+
 ## 0.1.0-beta.2 — 14/11/2026 · usar o Astryx-NEXT em apps novas
 
 Torna o Astryx-NEXT fácil de usar em qualquer app futura, sem depender do fork estar disponível.

@@ -8,7 +8,7 @@ import {
   AlertDialog, Banner, Button, Card, DropdownMenu, DropdownMenuDivider, DropdownMenuGroup, DropdownMenuItem,
   DropdownMenuRadioGroup, DropdownMenuRadioItem, Heading, Icon, StatusDot, Text, TextInput, VStack,
 } from '@astryxdesign/core';
-import { MODO_TEMA, useAparencia, useOnline } from 'astryx-next/comum';
+import { MODO_TEMA, transicao, useAparencia, useOnline } from 'astryx-next/comum';
 import { BarraApp, BarraEstado, Estado } from 'astryx-next/desktop';
 import { CartaoInfo, Definicoes, DockProvider, GrelhaInfo, GrupoDef, LinhaDef } from 'astryx-next/mobile';
 import { Campo, Formulario, Seccao } from 'astryx-next/formulario';
@@ -76,7 +76,7 @@ function Principal({ sessao, aparencia: [aparencia, mudar, repor], onSair }) {
   const menuApp = (
     <>
       <DropdownMenuItem label={`Sobre ${APP.nome}`} onClick={() => setSobre(true)} />
-      <DropdownMenuItem label="Definições…" onClick={() => setPagina('Definições')} />
+      <DropdownMenuItem label="Definições…" onClick={() => transicao(() => setPagina('Definições'), 'frente')} />
       <DropdownMenuDivider />
       <DropdownMenuGroup title="Tema">
         <DropdownMenuRadioGroup label="Tema" value={aparencia.rapido} onChange={(v) => mudar({ rapido: v })}>
@@ -111,7 +111,7 @@ function Principal({ sessao, aparencia: [aparencia, mudar, repor], onSair }) {
         pesquisa={{ valor: pesquisa, onChange: setPesquisa, placeholder: 'Pesquisar…' }}
         fim={
           <DropdownMenu placement="below" alignment="end" button={{ label: 'Menu principal', variant: 'ghost', isIconOnly: true, icon: <Icon icon="menu" /> }}>
-            <DropdownMenuItem label="Preferências" onClick={() => setPagina('Definições')} />
+            <DropdownMenuItem label="Preferências" onClick={() => transicao(() => setPagina('Definições'), 'frente')} />
             <DropdownMenuItem label="Ajuda" />
           </DropdownMenu>
         }
@@ -124,7 +124,7 @@ function Principal({ sessao, aparencia: [aparencia, mudar, repor], onSair }) {
         {pagina === 'Novo registo' && <PaginaFormulario onGuardado={() => setPagina('Registos')} />}
         {pagina === 'Definições' && (
           <Definicoes
-            onVoltar={() => setPagina('Início')}
+            onVoltar={() => transicao(() => setPagina('Início'), 'tras')}
             aparencia={aparencia}
             mudar={mudar}
             repor={repor}

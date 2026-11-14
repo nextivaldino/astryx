@@ -14,6 +14,7 @@
 // Só compõe componentes do Astryx; o estilo vem de barra-app.css + tema.
 import { useEffect, useId, useState } from 'react';
 import { Button, DropdownMenu, Icon, Tab, TabList, TextInput } from '@astryxdesign/core';
+import { sentidoEntre, transicao } from '../comum/index.js';
 import './barra-app.css';
 
 const lerAberta = (chave) => { try { return localStorage.getItem(chave) === '1'; } catch { return false; } };
@@ -35,10 +36,11 @@ export default function BarraApp({
   const chave = `ds-barra-sub:${app.nome}`;
   const [aberta, setAberta] = useState(() => lerAberta(chave));
   const [aPesquisar, setAPesquisar] = useState(false);
+  const irPara = (v) => v !== abaAtiva && transicao(() => onAbaChange(v), sentidoEntre(abas.map((a) => a.valor), abaAtiva, v));
   useEffect(() => gravarAberta(chave, aberta), [chave, aberta]);
 
   const abasEl = abas.length > 0 && (
-    <TabList value={abaAtiva} onChange={onAbaChange} size="sm" overflow="scroll">
+    <TabList value={abaAtiva} onChange={irPara} size="sm" overflow="scroll">
       {abas.map((a) => (
         <Tab key={a.valor} value={a.valor} label={a.rotulo} icon={a.icone && <Icon icon={a.icone} size="sm" />} />
       ))}
@@ -154,7 +156,7 @@ export default function BarraApp({
               type="button"
               className="ds-barra-fundo-item"
               aria-current={a.valor === abaAtiva ? 'page' : undefined}
-              onClick={() => onAbaChange(a.valor)}
+              onClick={() => irPara(a.valor)}
             >
               {a.icone && <Icon icon={a.icone} />}
               <span>{a.rotulo}</span>

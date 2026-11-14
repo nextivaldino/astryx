@@ -105,13 +105,20 @@
 .nm-painel {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows var(--duration-medium, 300ms) var(--ease-standard, ease-out);
+  transition: grid-template-rows var(--mov-painel-fechar) var(--mov-suave);
 }
-.nm-dock[data-aberta] .nm-painel { grid-template-rows: 1fr; }
+.nm-dock[data-aberta] .nm-painel { grid-template-rows: 1fr; transition-duration: var(--mov-painel-abrir); }
 .nm-painel-dentro {
   min-block-size: 0;
   overflow: hidden;
+  /* ao fechar, o conteúdo desvanece e desfoca enquanto o painel encolhe */
+  opacity: 0;
+  filter: blur(var(--mov-desfoque));
+  transition: opacity var(--mov-fechar) var(--mov-suave), filter var(--mov-fechar) var(--mov-suave);
 }
+.nm-dock[data-aberta] .nm-painel-dentro { opacity: 1; filter: none; transition-duration: var(--mov-abrir); }
+/* conteúdo novo (abrir, ou passar de um painel para outro): sobe e ganha nitidez */
+.nm-dock[data-aberta] .nm-painel-corpo { animation: mov-entra var(--mov-painel-abrir) var(--mov-suave) both; }
 .nm-painel-corpo {
   max-block-size: calc(100dvh - var(--nm-barra) - var(--nm-fundo) - 120px);
   overflow-y: auto;
@@ -185,7 +192,7 @@
   color: var(--color-text-secondary);
 }
 .nm-botao:hover, .nm-separador:hover { background: var(--color-overlay-hover); }
-.nm-avisos { animation: nm-ilha-entra var(--duration-medium, 300ms) cubic-bezier(0.34, 1.56, 0.64, 1); }
+.nm-avisos { animation: nm-ilha-entra var(--duration-medium, 300ms) var(--mov-mola); }
 .nm-botao[aria-expanded='true'] { color: var(--color-text-accent); background: var(--color-accent-muted); }
 .nm-selo {
   position: absolute;
@@ -209,6 +216,8 @@
 
 /* Separadores: só o atual mostra o nome (telemóvel) */
 .nm-separadores {
+  position: relative;
+  isolation: isolate;
   flex: 1;
   display: flex;
   /* o 1.º encosta à esquerda com o mesmo espaço do ＋ à direita (concêntrico
@@ -239,11 +248,28 @@
   font-weight: 620;
   white-space: nowrap;
 }
-.nm-separador[data-atual] {
-  /* pílula do selecionado: cor de destaque sólida, mais larga, com brilho
-     suave nas bordas (fio de luz por dentro + halo da própria cor) */
-  padding-inline: 20px;
-  color: var(--color-on-accent);
+.nm-separador[data-atual] { padding-inline: 20px; color: var(--color-on-accent); }
+.nm-separador[data-atual]:hover { background: transparent; }
+/* Pílula do selecionado: uma só, por baixo dos separadores, que desliza de um
+   para o outro e ajusta a largura (medida em Dock.jsx). Cor de destaque sólida,
+   com brilho suave nas bordas (fio de luz por dentro + halo da própria cor). */
+.nm-pilula {
+  position: absolute;
+  z-index: -1;
+  inset-block: 0;
+  left: 0;
+  inline-size: var(--pilula-w, 0);
+  translate: var(--pilula-x, 0) 0;
+  border-radius: 999px;
+  transition:
+    translate var(--mov-abrir) var(--mov-suave),
+    inline-size var(--mov-abrir) var(--mov-suave),
+    opacity var(--mov-fechar) var(--mov-suave),
+    scale var(--mov-fechar) var(--mov-suave);
+}
+/* a cor da pílula (também no separador ativo de amostras estáticas, sem .nm-pilula) */
+.nm-pilula,
+.nm-separadores:not(:has(> .nm-pilula)) > .nm-separador[data-atual] {
   background: var(--color-accent);
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, white 28%, transparent),
@@ -252,7 +278,10 @@
     0 0 0 1px color-mix(in srgb, var(--color-accent) 35%, transparent),
     0 2px 10px color-mix(in srgb, var(--color-accent) 38%, transparent);
 }
-.nm-separador[data-atual]:hover { background: color-mix(in srgb, var(--color-accent) 92%, black); }
+.nm-separadores:has(.nm-separador[data-atual]:hover) .nm-pilula { background: color-mix(in srgb, var(--color-accent) 92%, black); }
+.nm-separadores[data-sem-pilula] .nm-pilula { opacity: 0; scale: 0.9; }
+/* o texto muda de cor ao ritmo da pílula */
+.nm-separador { transition: background-color var(--mov-fechar) ease-out, color var(--mov-abrir) var(--mov-suave); }
 .nm-separador[data-atual] .nm-separador-nome { display: inline; }
 
 /* Nomes na dock (Aparência → Dock), lido de <html data-nomes-dock>:
@@ -293,9 +322,9 @@
   background: var(--color-accent);
   color: var(--color-on-accent);
   box-shadow: 0 0 0 1px light-dark(rgb(0 0 6 / 10%), rgb(0 0 0 / 30%)), var(--ds-vol-preenchido);
-  transition: transform var(--duration-medium, 300ms) cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform var(--duration-medium, 300ms) var(--mov-mola);
 }
-.nm-criar svg { transition: rotate var(--duration-medium, 300ms) cubic-bezier(0.34, 1.56, 0.64, 1); }
+.nm-criar svg { transition: rotate var(--duration-medium, 300ms) var(--mov-mola); }
 .nm-criar[data-aberto] svg { rotate: 135deg; }
 .nm-criar:active { transform: scale(0.9); box-shadow: 0 0 0 1px rgb(0 0 6 / 10%), var(--ds-vol-calha); }
 
@@ -312,12 +341,12 @@
   background: var(--ilha);
   color: var(--ilha-tx);
   font-size: 20px;
-  animation: nm-ilha-entra var(--duration-medium, 300ms) cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: nm-ilha-entra var(--duration-medium, 300ms) var(--mov-mola);
 }
 .nm-ilha[data-tipo='sucesso'] { --ilha: var(--color-success-muted); --ilha-tx: var(--color-text-success); }
 .nm-ilha[data-tipo='atencao'] { --ilha: var(--color-warning-muted); --ilha-tx: var(--color-text-warning); }
 .nm-ilha[data-tipo='erro'] { --ilha: var(--color-error-muted); --ilha-tx: var(--color-text-error); }
-@keyframes nm-ilha-entra { from { opacity: 0; transform: scale(0.85); } }
+@keyframes nm-ilha-entra { from { opacity: 0; transform: scale(0.85); filter: blur(var(--mov-desfoque)); } }
 .nm-ilha-texto {
   display: grid;
   min-inline-size: 0;
@@ -394,7 +423,7 @@
 body:has(.nm-dock) { padding-block-end: calc(64px + 24px + env(safe-area-inset-bottom, 0px)); }
 
 @media (prefers-reduced-motion: reduce) {
-  .nm-dock, .nm-painel, .nm-criar, .nm-criar svg, .nm-ilha, .nm-separador { transition: none; animation: none; }
+  .nm-dock, .nm-painel, .nm-painel-dentro, .nm-painel-corpo, .nm-pilula, .nm-criar, .nm-criar svg, .nm-ilha, .nm-separador { transition: none; animation: none; }
 }
 
 /* ══ Bolha de avisos (dock cheia, telemóvel) ════════════════════════════
@@ -426,7 +455,7 @@ body:has(.nm-dock) { padding-block-end: calc(64px + 24px + env(safe-area-inset-b
     inset 0 1px 0 rgb(255 255 255 / 30%),
     inset 0 -1px 0 rgb(0 0 6 / 16%),
     var(--shadow-med);
-  animation: nm-ilha-entra var(--duration-medium, 300ms) cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: nm-ilha-entra var(--duration-medium, 300ms) var(--mov-mola);
   transition:
     inline-size var(--duration-fast, 150ms) var(--ease-standard, ease-out),
     block-size var(--duration-fast, 150ms) var(--ease-standard, ease-out),
@@ -458,7 +487,7 @@ body:has(.nm-dock) { padding-block-end: calc(64px + 24px + env(safe-area-inset-b
 }
 /* A bolha respira com o sino: encolhe e volta, sem nunca passar da altura
    da dock (escala máxima = 1). Mesmo ritmo do sino. */
-.nm-bolha { animation: nm-ilha-entra var(--duration-medium, 300ms) cubic-bezier(0.34, 1.56, 0.64, 1), nm-bolha-respira 3.5s ease-in-out infinite; }
+.nm-bolha { animation: nm-ilha-entra var(--duration-medium, 300ms) var(--mov-mola), nm-bolha-respira 3.5s ease-in-out infinite; }
 @keyframes nm-bolha-respira {
   0%, 38%, 100% { scale: 1; }
   9% { scale: 0.88; }

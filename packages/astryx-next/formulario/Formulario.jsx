@@ -87,7 +87,15 @@ export default function Formulario({ id, inicial = {}, onSubmeter, onAviso, rotu
 
   function submeter(e) {
     e.preventDefault();
-    if (faltamObrig.length) return focar(faltamObrig[0]);
+    if (faltamObrig.length) {
+      // o campo em falta abana (e assenta) para mostrar onde está o problema
+      const campo = raiz.current?.querySelector(`[data-nf-campo="${faltamObrig[0].nome}"]`);
+      campo?.removeAttribute('data-tremer');
+      void campo?.offsetWidth; // recomeça a animação se já estava a abanar
+      campo?.setAttribute('data-tremer', '');
+      campo?.addEventListener('animationend', () => campo.removeAttribute('data-tremer'), { once: true });
+      return focar(faltamObrig[0]);
+    }
     onSubmeter?.(valores);
     if (id) try { localStorage.removeItem(`nf-rascunho:${id}`); } catch {}
   }

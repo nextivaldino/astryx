@@ -19,7 +19,7 @@ export default function CartaoInfo({ tom = 'neutro', icone, titulo, valor, descr
         {icone && <span className="nm-info-icone" aria-hidden="true">{typeof icone === 'string' ? <Icon icon={icone} /> : icone}</span>}
         <h3 className="nm-info-titulo">{titulo}</h3>
       </header>
-      {valor != null && <p className="nm-info-valor">{valor}</p>}
+      {valor != null && <p key={String(valor)} className="nm-info-valor">{valor}</p>}
       {descricao && <p className="nm-info-descricao">{descricao}</p>}
       {children}
       {acao && <div className="nm-info-acao">{acao}</div>}

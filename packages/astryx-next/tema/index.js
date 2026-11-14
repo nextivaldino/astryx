@@ -9,6 +9,7 @@ import '@fontsource-variable/mona-sans/standard-italic.css';
 import './cores.css';
 import './tipografia.css';
 import './raios.css';
+import './movimento.css';
 import './menus.css';
 import './volume.css';
 import './fechar.css';

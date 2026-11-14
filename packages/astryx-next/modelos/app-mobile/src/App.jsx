@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Theme } from '@astryxdesign/core/theme';
 import { neutralTheme } from '@astryxdesign/theme-neutral/built';
 import { Banner, Button, Card, Heading, Icon, Text, TextInput, VStack } from '@astryxdesign/core';
-import { MODO_TEMA, useAparencia, useOnline } from 'astryx-next/comum';
+import { MODO_TEMA, transicao, useAparencia, useOnline } from 'astryx-next/comum';
 import {
   CantoUtilizador, CartaoInfo, CasaIcone, Definicoes, Dock, DockProvider, GrelhaInfo, GrupoDef, LinhaDef, OpcaoDock, useDock,
 } from 'astryx-next/mobile';
@@ -141,7 +141,7 @@ function Principal({ sessao, aparencia: [aparencia, mudar, repor], onSair }) {
       rotulo: APP.nome,
       conteudo: (
         <div className="nm-grelha">
-          <OpcaoDock icone="wrench" titulo="Definições" contexto="Aparência, dock e conta" onClick={() => { dock.fechar(); setPagina('Definições'); }} />
+          <OpcaoDock icone="wrench" titulo="Definições" contexto="Aparência, dock e conta" onClick={() => { dock.fechar(); transicao(() => setPagina('Definições'), 'frente'); }} />
           <OpcaoDock icone="info" titulo={`Sobre ${APP.nome}`} contexto={`Versão ${APP.versao} · Astryx-NEXT`} />
           <OpcaoDock icone="close" titulo="Terminar sessão" contexto={sessao.nome} className="nm-opcao app-perigo" onClick={onSair} />
         </div>
@@ -152,7 +152,7 @@ function Principal({ sessao, aparencia: [aparencia, mudar, repor], onSair }) {
   if (pagina === 'Definições') {
     return (
       <Definicoes
-        onVoltar={() => setPagina('Início')}
+        onVoltar={() => transicao(() => setPagina('Início'), 'tras')}
         aparencia={aparencia}
         mudar={mudar}
         repor={repor}
@@ -178,7 +178,7 @@ function Principal({ sessao, aparencia: [aparencia, mudar, repor], onSair }) {
           aparencia={aparencia}
           mudar={mudar}
           itens={[
-            { icone: 'wrench', titulo: 'Definições', onClick: () => setPagina('Definições') },
+            { icone: 'wrench', titulo: 'Definições', onClick: () => transicao(() => setPagina('Definições'), 'frente') },
             { icone: 'info', titulo: `Sobre ${APP.nome}`, contexto: APP.versao },
             { icone: 'close', titulo: 'Terminar sessão', perigo: true, onClick: onSair },
           ]}

@@ -172,3 +172,7 @@ textarea.nf-entrada { resize: none; field-sizing: content; min-block-size: 80px;
   .nf-legenda, .nf-entrada, .nf-segmentos span { transition: none; }
   .nf-ok { animation: none; }
 }
+
+/* Erro ao guardar: o campo em falta abana e assenta (tema/movimento.css) */
+.nf-campo[data-tremer] { animation: mov-tremer 360ms var(--mov-suave); }
+@media (prefers-reduced-motion: reduce) { .nf-campo[data-tremer] { animation: none; } }

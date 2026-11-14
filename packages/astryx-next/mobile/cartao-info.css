@@ -49,3 +49,7 @@
 }
 .nm-info-descricao { margin: 0; font-size: var(--font-size-xs); line-height: 1.4; opacity: 0.85; }
 .nm-info-acao { margin-block-start: auto; padding-block-start: 8px; }
+
+/* Quando o valor muda, cruza com desfoque no sítio (sem andar) */
+.nm-info-valor { animation: mov-troca var(--mov-abrir) var(--mov-suave); }
+@media (prefers-reduced-motion: reduce) { .nm-info-valor { animation: none; } }
