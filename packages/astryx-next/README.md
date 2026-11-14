@@ -36,6 +36,26 @@ páginas, e "avisos no fundo" (o fundo ganha a cor do aviso ativo). Tudo em Defi
 controlos de 44px, superfícies sem contorno e campos preenchidos (`tema/mobile.css`). O desktop não muda — as duas
 versões são a mesma família.
 
+**Definições no desktop:** `JanelaDefinicoes` é uma janela flutuante (arrastar pela barra de título, redimensionar,
+duplo clique para maximizar, ⌘/Ctrl + , para abrir) com as mesmas escolhas do mobile, pesquisa e pré-visualização ao
+vivo. Num ecrã estreito ocupa o ecrã todo.
+
+```jsx
+const [aberta, setAberta] = useState(false);
+<JanelaDefinicoes aberta={aberta} onAbrir={() => setAberta(true)} onFechar={() => setAberta(false)}
+  aparencia={aparencia} mudar={mudar} repor={repor} app={{ nome: 'Agenda', versao: '1.0.0' }}
+  seccoesApp={[{ id: 'conta', titulo: 'Conta', icone: 'info', conteudo: <GrupoDef>…</GrupoDef> }]} />
+```
+
+**Electron:** para a barra de título nativa seguir o modo da app:
+
+```js
+import { BrowserWindow, ipcMain, nativeTheme } from 'electron';
+import { ligarAstryxNext, PRELOAD } from './astryx-next/electron/principal.js';
+const win = new BrowserWindow({ webPreferences: { preload: PRELOAD } });
+ligarAstryxNext(win, { ipcMain, nativeTheme });
+```
+
 O registo de todas as mudanças está em [`ALTERACOES.md`](../../ALTERACOES.md), na raiz do fork.
 
 ---

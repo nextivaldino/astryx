@@ -1,0 +1,196 @@
+/*
+ * Janela de definições (next-desktop) — flutuante, arrastável, redimensionável.
+ * Só tokens do tema; a posição vem do JS em `translate` (barato de animar e de mexer).
+ */
+.ds-janela {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 70;
+  box-sizing: border-box;
+  inline-size: min(900px, calc(100vw - 48px));
+  block-size: min(640px, calc(100dvh - 80px));
+  min-inline-size: 600px;
+  min-block-size: 400px;
+  max-inline-size: 100vw;
+  max-block-size: 100dvh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  resize: both; /* canto inferior direito */
+  border-radius: calc(var(--radius-container) + 2px);
+  background: var(--color-background-popover);
+  color: var(--color-text-primary);
+  box-shadow:
+    0 0 0 1px var(--color-border-emphasized),
+    0 2px 6px light-dark(rgb(0 0 6 / 6%), rgb(0 0 0 / 30%)),
+    0 24px 64px light-dark(rgb(0 0 6 / 16%), rgb(0 0 0 / 52%));
+  contain: layout paint;
+  transform-origin: 50% 20%;
+  animation: ds-janela-entra var(--mov-abrir, 250ms) var(--mov-suave, ease-out);
+}
+.ds-janela[data-fechando] { animation: ds-janela-sai var(--mov-fechar, 150ms) var(--mov-suave, ease-out) forwards; }
+@keyframes ds-janela-entra { from { opacity: 0; scale: 0.97; filter: blur(var(--mov-desfoque, 2px)); } }
+@keyframes ds-janela-sai { to { opacity: 0; scale: 0.98; } }
+
+/* Maximizada (duplo clique na barra) e ecrãs estreitos: ocupa o espaço todo */
+.ds-janela[data-max] {
+  translate: none !important;
+  inset: 12px;
+  inline-size: auto !important;
+  block-size: auto !important;
+  resize: none;
+}
+
+/* ── Barra de título: arrasta-se por aqui ── */
+.ds-janela-titulo {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  block-size: 46px;
+  padding-inline: 10px;
+  border-block-end: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-background-surface) 55%, var(--color-background-popover));
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.ds-janela[data-a-arrastar] .ds-janela-titulo { cursor: grabbing; }
+.ds-janela[data-a-arrastar] { box-shadow: 0 0 0 1px var(--color-border-emphasized), 0 32px 80px light-dark(rgb(0 0 6 / 20%), rgb(0 0 0 / 60%)); }
+.ds-janela[data-max] .ds-janela-titulo { cursor: default; }
+.ds-janela-titulo h1 { margin: 0; font-size: var(--font-size-sm); font-weight: 650; }
+.ds-janela-titulo > .astryx-button { justify-self: end; }
+.ds-janela-pega {
+  justify-self: start;
+  inline-size: 34px;
+  block-size: 4px;
+  margin-inline-start: 6px;
+  border-radius: 999px;
+  background: var(--color-border-emphasized);
+}
+
+/* ── Corpo: lado + conteúdo ── */
+.ds-janela-corpo { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-block-size: 0; }
+
+.ds-janela-lado {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 10px;
+  overflow: auto;
+  border-inline-end: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-background-surface) 40%, var(--color-background-popover));
+}
+.ds-janela-procura {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-block-end: 10px;
+  padding-inline: 10px;
+  block-size: var(--size-element-md, 32px);
+  border-radius: var(--radius-element);
+  background: light-dark(rgb(0 0 6 / 5%), rgb(255 255 255 / 7%));
+  color: var(--color-text-secondary);
+  font-size: 16px;
+}
+.ds-janela-procura:focus-within { box-shadow: 0 0 0 2px var(--color-accent); }
+.ds-janela-procura input {
+  flex: 1;
+  min-inline-size: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: var(--font-size-sm);
+}
+.ds-janela-item {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-block-size: 38px;
+  padding: 6px 12px;
+  border-radius: var(--radius-element);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background-color var(--mov-fechar, 150ms) ease-out, color var(--mov-fechar, 150ms) ease-out;
+}
+.ds-janela-item-icone { display: grid; place-items: center; font-size: 18px; color: var(--color-text-secondary); }
+@media (hover: hover) { .ds-janela-item:hover { background: var(--color-overlay-hover); } }
+.ds-janela-item:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+.ds-janela-item[aria-current='page'] { background: var(--color-accent-muted); color: var(--color-text-accent); font-weight: 650; }
+.ds-janela-item[aria-current='page'] .ds-janela-item-icone { color: var(--color-text-accent); }
+.ds-janela-rodape { margin-block-start: auto; padding: 12px 12px 4px; font-size: var(--font-size-2xs); color: var(--color-text-secondary); }
+
+.ds-janela-conteudo { overflow: auto; overscroll-behavior: contain; padding: 24px 32px 40px; }
+.ds-janela-seccao { display: grid; gap: 20px; max-inline-size: 640px; margin-inline: auto; }
+.ds-janela-seccao + .ds-janela-seccao { margin-block-start: 36px; }
+.ds-janela-seccao > h2 { margin: 0; font-size: var(--font-size-xl); font-weight: 650; }
+.ds-janela-seccao [hidden] { display: none !important; }
+.ds-janela-vazio { margin: 48px auto; text-align: center; color: var(--color-text-secondary); }
+.ds-janela-tecla {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: light-dark(rgb(0 0 6 / 6%), rgb(255 255 255 / 8%));
+  box-shadow: inset 0 -1px 0 var(--color-border-emphasized);
+  font: inherit;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+/* ── Miniatura ao vivo (app next-desktop) ── */
+.ds-mini {
+  display: grid;
+  grid-template-rows: 18px 1fr 10px;
+  aspect-ratio: 16 / 9;
+  max-inline-size: 420px;
+  inline-size: 100%;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: var(--radius-container);
+  background: var(--color-background-body);
+  box-shadow: 0 0 0 1px var(--color-border-emphasized), var(--shadow-med);
+}
+.ds-mini-barra, .ds-mini-estado {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-inline: 8px;
+  background: var(--color-background-surface);
+  border-block-end: 1px solid var(--color-border);
+}
+.ds-mini-estado { border-block: 1px solid var(--color-border) 0; }
+.ds-mini-barra b { inline-size: 10px; block-size: 10px; border-radius: 3px; background: var(--color-accent); }
+.ds-mini-barra i, .ds-mini-estado i { inline-size: 26px; block-size: 4px; border-radius: 2px; background: var(--color-border-emphasized); }
+.ds-mini-barra em { inline-size: 30px; block-size: 10px; border-radius: 999px; background: var(--color-accent); margin-inline-start: auto; }
+.ds-mini-barra i:last-child { margin-inline-end: auto; }
+.ds-mini-area { display: grid; grid-template-columns: repeat(3, 1fr); align-content: start; gap: 8px; padding: 12px; }
+.ds-mini-area span { block-size: 46px; border-radius: var(--radius-element); background: var(--color-background-card); box-shadow: 0 0 0 1px var(--color-border); }
+.ds-mini-area span:first-child { grid-column: span 2; }
+/* a amostra de textura usa um passo pequeno; na miniatura fica igual ao real em escala */
+.ds-mini-area[data-amostra^='textura-'] { --tx-passo: 12px; --tx-l: color-mix(in srgb, var(--color-text-primary) 10%, transparent); --tx-forte: color-mix(in srgb, var(--color-text-primary) 22%, transparent); }
+
+/* ── Ecrã estreito (web no telemóvel/tablet): a janela ocupa o ecrã; o lado vira uma faixa ── */
+@media (width <= 720px) {
+  .ds-janela {
+    translate: none !important;
+    inset: 0;
+    inline-size: auto !important;
+    block-size: auto !important;
+    min-inline-size: 0;
+    border-radius: 0;
+    resize: none;
+  }
+  .ds-janela-titulo { cursor: default; }
+  .ds-janela-corpo { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .ds-janela-lado { flex-direction: row; align-items: center; overflow-x: auto; border-inline-end: 0; border-block-end: 1px solid var(--color-border); }
+  .ds-janela-procura { margin: 0; min-inline-size: 180px; }
+  .ds-janela-item { flex: none; }
+  .ds-janela-rodape { display: none; }
+  .ds-janela-conteudo { padding: 20px 16px 32px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .ds-janela, .ds-janela[data-fechando] { animation: none; } }

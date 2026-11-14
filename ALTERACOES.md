@@ -28,6 +28,26 @@ Inspiração: **GNOME HIG / libadwaita** (paleta Adwaita, barras, listas em caix
 
 ---
 
+## 0.1.0-beta.7 — 14/11/2026 · janela de definições (desktop/Electron)
+
+O next-desktop ganha a mesma personalização do mobile, numa **janela de definições flutuante** ao estilo do
+painel do Opera (`JanelaDefinicoes`, em `astryx-next/desktop`).
+
+| O que mudou | Porquê | Tipo | Impacto | Quebra? |
+|---|---|---|---|---|
+| `JanelaDefinicoes`: janela flutuante com barra de título (arrastar; duplo clique maximiza; ✕ fecha), redimensionável pelo canto, barra lateral com secções (Aparência, Padrão do fundo, Interface, secções da app, Sobre) | Definições do desktop sem sair da página, como num browser | novo componente | desktop | não |
+| Pesquisa nas definições (ignora acentos e maiúsculas), com aviso quando não encontra nada | Chegar a qualquer opção em segundos | novo componente | desktop | não |
+| Não bloqueia a app: cada mudança aplica-se logo e vê-se por trás; miniatura ao vivo de uma app next-desktop | Experimentar sem abrir e fechar | novo componente | desktop | não |
+| Lembra posição, tamanho e se estava maximizada; nunca sai do ecrã (a barra de título fica sempre ao alcance); abre/fecha com ⌘/Ctrl + , ; Esc fecha; o foco volta onde estava | Comportamento de janela de verdade | novo componente | desktop | não |
+| Leve: só existe enquanto aberta; arrastar mexe só no `translate` (sem renderizar o React); `contain: layout paint` | Não pesar no sistema | novo componente | desktop | não |
+| Ecrã estreito (web no telemóvel): ocupa o ecrã todo e as secções passam a uma faixa horizontal | Funciona também em web mobile | novo componente | mobile · tablet | não |
+| **Tamanho da interface** (90 · 100 · 110 · 125%), em Interface | Ajustar a app ao monitor | tema | desktop | não |
+| `astryx-next/electron`: `preload.cjs` + `ligarAstryxNext(win, { ipcMain, nativeTheme })` — a barra de título nativa, os menus do sistema e o fundo da janela seguem o modo escolhido na app | A moldura do Electron deixa de ficar clara numa app escura | novo componente | desktop | não |
+| Partilhados com o mobile: `EscolhaEstilo`, `PadraoFundo`, `Amostras`, `segmento()` (exportados de `Definicoes.jsx`) | As duas versões têm sempre as mesmas opções | código-fonte | todos | não |
+| Modelo `app-desktop`: "Definições…" abre a janela (em vez de uma página) | Apps novas já nascem com ela | código-fonte | desktop | não |
+
+---
+
 ## 0.1.0-beta.6 — 14/11/2026 · mobile mais suave
 
 A versão mobile fica mais suave e pronta para o toque, **sem deixar de ser a mesma família do desktop**: muda só

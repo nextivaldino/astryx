@@ -55,6 +55,13 @@ export const OPCOES = {
     { valor: 'inicio', rotulo: 'Só no início' },
     { valor: 'todas', rotulo: 'Em todas' },
   ],
+  // Tamanho da interface (desktop / Electron): zoom de toda a app
+  escala: [
+    { valor: '90', rotulo: '90%' },
+    { valor: '100', rotulo: '100%' },
+    { valor: '110', rotulo: '110%' },
+    { valor: '125', rotulo: '125%' },
+  ],
   formaBotoes: [
     { valor: 'arredondado', rotulo: 'Arredondados' },
     { valor: 'pilula', rotulo: 'Pílula' },
@@ -86,6 +93,7 @@ export const OPCOES = {
 export const PADRAO = {
   estilo: 'adwaita', modo: 'sistema', fundo: 'padrao', destaque: 'azul',
   textura: 'nenhuma', texturaIntensidade: 'suave', texturaOnde: 'inicio', texturaAvisos: true,
+  escala: '100',
   densidade: 'normal', formaBotoes: 'arredondado', ladoCriar: 'direita', nomesDock: 'frequentes', reduzirEfeitos: false,
   // Dock (Definições → Dock)
   dockTema: 'igual', dockMaterial: 'vidro', dockEncolher: true, dockEsconder: true,
@@ -139,6 +147,7 @@ export function aplicarAparencia(guardada) {
   d.fundo = a.fundo;
   d.destaque = a.destaque;
   d.densidade = a.densidade;
+  d.escala = a.escala;
   d.textura = a.textura;
   d.texturaIntensidade = a.texturaIntensidade;
   d.texturaOnde = a.texturaOnde;
@@ -152,6 +161,9 @@ export function aplicarAparencia(guardada) {
   d.dockEsconder = a.dockEsconder ? 'sim' : 'nao';
   if (a.reduzirEfeitos) d.reduzirEfeitos = ''; else delete d.reduzirEfeitos;
   if (a.modo === 'sistema') delete d.theme; else d.theme = a.modo === 'escuro' ? 'dark' : 'light';
+  // Electron: a moldura nativa (barra de título, menus do sistema) segue o modo da app.
+  // O preload expõe window.astryxNext.definirModo — ver README, "Electron".
+  try { globalThis.astryxNext?.definirModo?.(a.modo); } catch {}
 }
 
 /** Chamar antes do primeiro render: evita ver outro tema por um instante. */

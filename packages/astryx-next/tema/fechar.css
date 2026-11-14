@@ -13,7 +13,7 @@
  */
 
 :is(.astryx-dialog, .astryx-drawer, .astryx-toast, .astryx-banner, .astryx-lightbox,
-    .astryx-bottom-sheet, .astryx-mobile-nav, .astryx-popover, .nm-dock)
+    .astryx-bottom-sheet, .astryx-mobile-nav, .astryx-popover, .nm-dock, .ds-janela)
   .astryx-button[data-variant='ghost']:has(svg.lucide-x):not(:is(.astryx-tokenizer, .astryx-token, .astryx-text-input, .astryx-power-search) *) {
   --ds-fechar-tamanho: 24px; /* mínimo de toque WCAG 2.2 (24px) */
   inline-size: var(--ds-fechar-tamanho);
@@ -29,20 +29,20 @@
   align-self: center;
 }
 :is(.astryx-dialog, .astryx-drawer, .astryx-toast, .astryx-banner, .astryx-lightbox,
-    .astryx-bottom-sheet, .astryx-mobile-nav, .astryx-popover, .nm-dock)
+    .astryx-bottom-sheet, .astryx-mobile-nav, .astryx-popover, .nm-dock, .ds-janela)
   .astryx-button[data-variant='ghost']:has(svg.lucide-x):not(:is(.astryx-tokenizer, .astryx-token, .astryx-text-input, .astryx-power-search) *):active {
   box-shadow:
     0 0 0 1px light-dark(rgb(160 0 0 / 35%), rgb(0 0 0 / 40%)),
     var(--ds-vol-calha);
 }
 :is(.astryx-dialog, .astryx-drawer, .astryx-toast, .astryx-banner, .astryx-lightbox,
-    .astryx-bottom-sheet, .astryx-mobile-nav, .astryx-popover, .nm-dock)
+    .astryx-bottom-sheet, .astryx-mobile-nav, .astryx-popover, .nm-dock, .ds-janela)
   .astryx-button[data-variant='ghost']:has(svg.lucide-x):not(:is(.astryx-tokenizer, .astryx-token, .astryx-text-input, .astryx-power-search) *):hover {
   background-color: color-mix(in srgb, var(--ds-adw-destructive-bg) 88%, black);
 }
 /* ✕ mais pequeno e mais grosso dentro do círculo */
 :is(.astryx-dialog, .astryx-drawer, .astryx-toast, .astryx-banner, .astryx-lightbox,
-    .astryx-bottom-sheet, .astryx-mobile-nav, .astryx-popover, .nm-dock)
+    .astryx-bottom-sheet, .astryx-mobile-nav, .astryx-popover, .nm-dock, .ds-janela)
   .astryx-button[data-variant='ghost'] svg.lucide-x {
   width: 14px;
   height: 14px;

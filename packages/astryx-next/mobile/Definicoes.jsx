@@ -56,7 +56,7 @@ export function LinhaDef({ icone, titulo, sub, fim, onClick, perigo }) {
 }
 
 /** Amostras de cor como botões de rádio nativos (teclado e leitores de ecrã de borla). */
-function Amostras({ nome, rotulo, opcoes, valor, onChange }) {
+export function Amostras({ nome, rotulo, opcoes, valor, onChange }) {
   return (
     <fieldset className="nm-amostras">
       <legend className="nm-def-grupo-titulo">{rotulo}</legend>
@@ -139,38 +139,40 @@ function DefDock({ aparencia, mudar }) {
   );
 }
 
-function Aparencia({ aparencia, mudar, repor }) {
-  const dock = useDock();
-  const seg = (campo, rotulo) => (
+/** Controlo segmentado para uma escolha de OPCOES (partilhado com a janela do desktop). */
+export function segmento(aparencia, mudar, campo, rotulo) {
+  return (
     <SegmentedControl label={rotulo} value={aparencia[campo]} onChange={(v) => mudar({ [campo]: v })} layout="fill">
       {OPCOES[campo].map((o) => <SegmentedControlItem key={o.valor} value={o.valor} label={o.rotulo} />)}
     </SegmentedControl>
   );
+}
+
+/** Escolha do estilo (Adwaita / Coral), com amostra. */
+export function EscolhaEstilo({ aparencia, mudar }) {
+  return (
+    <section className="nm-def-grupo">
+      <h2 className="nm-def-grupo-titulo">Estilo</h2>
+      <div className="nm-estilos" role="radiogroup" aria-label="Estilo">
+        {OPCOES.estilo.map((o) => (
+          <label key={o.valor} className="nm-estilo">
+            <input type="radio" name="estilo" checked={aparencia.estilo === o.valor} onChange={() => mudar({ estilo: o.valor })} />
+            <span className="nm-estilo-amostra" data-amostra={`estilo-${o.valor}`} aria-hidden="true"><i /><i /><b /></span>
+            <span className="nm-def-titulo">{o.rotulo}</span>
+            <span className="nm-def-sub">{o.descricao}</span>
+          </label>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** Padrão do fundo + avisos no fundo (tema/textura.css). */
+export function PadraoFundo({ aparencia, mudar }) {
+  const dock = useDock();
+  const seg = (campo, rotulo) => segmento(aparencia, mudar, campo, rotulo);
   return (
     <>
-      <Miniatura />
-
-      <section className="nm-def-grupo">
-        <h2 className="nm-def-grupo-titulo">Estilo</h2>
-        <div className="nm-estilos" role="radiogroup" aria-label="Estilo">
-          {OPCOES.estilo.map((o) => (
-            <label key={o.valor} className="nm-estilo">
-              <input type="radio" name="estilo" checked={aparencia.estilo === o.valor} onChange={() => mudar({ estilo: o.valor })} />
-              <span className="nm-estilo-amostra" data-amostra={`estilo-${o.valor}`} aria-hidden="true"><i /><i /><b /></span>
-              <span className="nm-def-titulo">{o.rotulo}</span>
-              <span className="nm-def-sub">{o.descricao}</span>
-            </label>
-          ))}
-        </div>
-      </section>
-
-      <GrupoDef titulo="Modo">
-        <div className="nm-def-controlo">{seg('modo', 'Modo')}</div>
-      </GrupoDef>
-
-      <Amostras nome="fundo" rotulo="Fundo" opcoes={OPCOES.fundo} valor={aparencia.fundo} onChange={(v) => mudar({ fundo: v })} />
-      <Amostras nome="destaque" rotulo="Cor de destaque" opcoes={OPCOES.destaque} valor={aparencia.destaque} onChange={(v) => mudar({ destaque: v })} />
-
       <Amostras nome="textura" rotulo="Padrão do fundo" opcoes={OPCOES.textura} valor={aparencia.textura} onChange={(v) => mudar({ textura: v })} />
       {aparencia.textura !== 'nenhuma' && (
         <GrupoDef nota="Linhas finas por trás do conteúdo; o passo acompanha a densidade e o ecrã.">
@@ -188,6 +190,26 @@ function Aparencia({ aparencia, mudar, repor }) {
         />
         {aparencia.texturaAvisos && <LinhaDef icone="info" titulo="Experimentar" sub="Mostra um aviso de exemplo" onClick={() => dock.aviso({ tipo: 'info', titulo: 'Assim fica um aviso' })} />}
       </GrupoDef>
+    </>
+  );
+}
+
+function Aparencia({ aparencia, mudar, repor }) {
+  const seg = (campo, rotulo) => segmento(aparencia, mudar, campo, rotulo);
+  return (
+    <>
+      <Miniatura />
+
+      <EscolhaEstilo aparencia={aparencia} mudar={mudar} />
+
+      <GrupoDef titulo="Modo">
+        <div className="nm-def-controlo">{seg('modo', 'Modo')}</div>
+      </GrupoDef>
+
+      <Amostras nome="fundo" rotulo="Fundo" opcoes={OPCOES.fundo} valor={aparencia.fundo} onChange={(v) => mudar({ fundo: v })} />
+      <Amostras nome="destaque" rotulo="Cor de destaque" opcoes={OPCOES.destaque} valor={aparencia.destaque} onChange={(v) => mudar({ destaque: v })} />
+
+      <PadraoFundo aparencia={aparencia} mudar={mudar} />
 
       <GrupoDef titulo="Forma dos botões">
         <div className="nm-def-controlo">{seg('formaBotoes', 'Forma dos botões')}</div>
@@ -217,7 +239,7 @@ function Aparencia({ aparencia, mudar, repor }) {
  * @param aparencia/mudar/repor  de useAparencia()
  * @param sistema     { nome, versao } para "Sobre o sistema"
  */
-export default function Definicoes({ onVoltar, seccoesApp = [], aparencia, mudar, repor, sistema = { nome: 'Astryx-NEXT', versao: '0.1.0-beta.6' } }) {
+export default function Definicoes({ onVoltar, seccoesApp = [], aparencia, mudar, repor, sistema = { nome: 'Astryx-NEXT', versao: '0.1.0-beta.7' } }) {
   const [vista, setVistaJa] = useState('raiz');
   const setVista = (v) => transicao(() => setVistaJa(v), v === 'raiz' ? 'tras' : 'frente');
 

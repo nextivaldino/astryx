@@ -108,3 +108,9 @@
   --nm-material: var(--color-background-popover);
 }
 :root[data-reduzir-efeitos], :root[data-reduzir-efeitos] [data-astryx-theme] { background-attachment: scroll; }
+
+/* ══ Tamanho da interface (desktop / Electron) ═════════════════════════
+   Zoom de toda a app, como o "tamanho da página" de um browser. */
+:root[data-escala='90'] { zoom: 0.9; }
+:root[data-escala='110'] { zoom: 1.1; }
+:root[data-escala='125'] { zoom: 1.25; }

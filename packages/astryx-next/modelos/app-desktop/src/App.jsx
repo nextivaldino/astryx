@@ -8,9 +8,9 @@ import {
   AlertDialog, Banner, Button, Card, DropdownMenu, DropdownMenuDivider, DropdownMenuGroup, DropdownMenuItem,
   DropdownMenuRadioGroup, DropdownMenuRadioItem, Heading, Icon, StatusDot, Text, TextInput, VStack,
 } from '@astryxdesign/core';
-import { MODO_TEMA, transicao, useAparencia, useOnline } from 'astryx-next/comum';
-import { BarraApp, BarraEstado, Estado } from 'astryx-next/desktop';
-import { CartaoInfo, Definicoes, DockProvider, GrelhaInfo, GrupoDef, LinhaDef } from 'astryx-next/mobile';
+import { MODO_TEMA, useAparencia, useOnline } from 'astryx-next/comum';
+import { BarraApp, BarraEstado, Estado, JanelaDefinicoes } from 'astryx-next/desktop';
+import { CartaoInfo, DockProvider, GrelhaInfo, GrupoDef, LinhaDef } from 'astryx-next/mobile';
 import { Campo, Formulario, Seccao } from 'astryx-next/formulario';
 import { iniciarSessao, lerSessao, terminarSessao } from './sessao.js';
 
@@ -72,11 +72,12 @@ function Principal({ sessao, aparencia: [aparencia, mudar, repor], onSair }) {
   const [pagina, setPagina] = useState('Início');
   const [pesquisa, setPesquisa] = useState('');
   const [sobre, setSobre] = useState(false);
+  const [definicoes, setDefinicoes] = useState(false); // janela flutuante (⌘/Ctrl + ,)
 
   const menuApp = (
     <>
       <DropdownMenuItem label={`Sobre ${APP.nome}`} onClick={() => setSobre(true)} />
-      <DropdownMenuItem label="Definições…" onClick={() => transicao(() => setPagina('Definições'), 'frente')} />
+      <DropdownMenuItem label="Definições…" onClick={() => setDefinicoes(true)} />
       <DropdownMenuDivider />
       <DropdownMenuGroup title="Tema">
         <DropdownMenuRadioGroup label="Tema" value={aparencia.rapido} onChange={(v) => mudar({ rapido: v })}>
@@ -111,26 +112,17 @@ function Principal({ sessao, aparencia: [aparencia, mudar, repor], onSair }) {
         pesquisa={{ valor: pesquisa, onChange: setPesquisa, placeholder: 'Pesquisar…' }}
         fim={
           <DropdownMenu placement="below" alignment="end" button={{ label: 'Menu principal', variant: 'ghost', isIconOnly: true, icon: <Icon icon="menu" /> }}>
-            <DropdownMenuItem label="Preferências" onClick={() => transicao(() => setPagina('Definições'), 'frente')} />
+            <DropdownMenuItem label="Definições" onClick={() => setDefinicoes(true)} />
             <DropdownMenuItem label="Ajuda" />
           </DropdownMenu>
         }
-        subBarra={pagina === 'Definições' ? undefined : subBarra}
+        subBarra={subBarra}
       />
 
       <main className="app-pagina">
         {pagina === 'Início' && <PaginaInicio nome={sessao.nome} onIr={setPagina} />}
         {pagina === 'Registos' && <PaginaRegistos />}
         {pagina === 'Novo registo' && <PaginaFormulario onGuardado={() => setPagina('Registos')} />}
-        {pagina === 'Definições' && (
-          <Definicoes
-            onVoltar={() => transicao(() => setPagina('Início'), 'tras')}
-            aparencia={aparencia}
-            mudar={mudar}
-            repor={repor}
-            seccoesApp={[{ titulo: 'Conta', itens: [{ icone: 'info', titulo: sessao.nome, sub: 'Sessão neste dispositivo' }, { icone: 'close', titulo: 'Terminar sessão', perigo: true, onClick: onSair }] }]}
-          />
-        )}
       </main>
 
       <BarraEstado
@@ -149,6 +141,27 @@ function Principal({ sessao, aparencia: [aparencia, mudar, repor], onSair }) {
             <Estado icone="info">{APP.nome} {APP.versao}</Estado>
           </>
         }
+      />
+
+      <JanelaDefinicoes
+        aberta={definicoes}
+        onAbrir={() => setDefinicoes(true)}
+        onFechar={() => setDefinicoes(false)}
+        aparencia={aparencia}
+        mudar={mudar}
+        repor={repor}
+        app={APP}
+        seccoesApp={[{
+          id: 'conta',
+          titulo: 'Conta',
+          icone: 'checkDouble',
+          conteudo: (
+            <GrupoDef titulo="Conta">
+              <LinhaDef icone="info" titulo={sessao.nome} sub="Sessão neste dispositivo" />
+              <LinhaDef icone="close" titulo="Terminar sessão" perigo onClick={onSair} />
+            </GrupoDef>
+          ),
+        }]}
       />
 
       <AlertDialog
