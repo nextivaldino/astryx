@@ -1,0 +1,23 @@
+/*
+ * Layout de páginas (next-mobile).
+ *
+ * .nm-colunas — os blocos da página em colunas que se ajustam sozinhas:
+ *   telemóvel: 1 coluna · tablet: 2 · ecrã largo: 3 (ou mais).
+ *   Colunas nativas do CSS: os blocos altos e baixos encaixam como um mural,
+ *   sem buracos, e nenhum bloco se parte entre colunas.
+ *   Afinar com --nm-coluna (largura mínima de cada coluna).
+ * .nm-bloco-largo — um bloco que ocupa todas as colunas (avisos, títulos).
+ */
+.nm-colunas {
+  --nm-coluna: 340px;
+  --nm-intervalo: 20px;
+  columns: var(--nm-coluna);
+  column-gap: var(--nm-intervalo);
+  max-inline-size: 1280px;
+  margin-inline: auto;
+}
+.nm-colunas > * {
+  break-inside: avoid;
+  margin-block: 0 var(--nm-intervalo);
+}
+.nm-colunas > .nm-bloco-largo { display: block; column-span: all; } /* só funciona em blocos */

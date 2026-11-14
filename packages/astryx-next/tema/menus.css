@@ -1,0 +1,45 @@
+/*
+ * Menus que abrem a partir de um botão — "desenrola por baixo".
+ *
+ * Abrangidos: DropdownMenu (e MoreMenu, que o usa), Selector, MultiSelector,
+ * ComplexSelector. Popover, HoverCard e Tooltip continuam a flutuar, tal como
+ * os menus abertos por botões redondos (avatar, só ícone).
+ *
+ *  - Sem espaço: o menu fica colado ao botão.
+ *  - Desenrola a partir da borda do botão, como uma persiana.
+ *  - Os cantos que se tocam ficam retos (decidido em menus.js, que mede
+ *    menu e botão: só o que está mesmo encostado fica reto).
+ *  - Se o menu abrir para cima, tudo inverte. O Astryx escreve o lado em
+ *    --_astryx-layer-enter-y: -1 = abriu por baixo, 1 = abriu por cima.
+ *
+ * Fora de @layer: tem de ganhar à animação e à margem que o Astryx aplica.
+ * [data-ds-colado] é posto por menus.js na camada (popover) do menu.
+ */
+
+/* ── A camada: sem espaço até ao botão ── */
+[popover][data-ds-colado] {
+  margin-block: 0;
+}
+
+/* ── A superfície do menu (a caixa visível) ──
+   DropdownMenu: .astryx-popover com o .astryx-dropdown-menu dentro (com ou sem cabeçalho).
+   Selectors: a própria .astryx-*-selector-popup. */
+[popover][data-ds-colado] > :is(.astryx-popover, .astryx-selector-popup, .astryx-multi-selector-popup, .astryx-complex-selector-popup) {
+  --_ds-y: var(--_astryx-layer-enter-y, -1);
+  /* a sombra não cai sobre o botão (corta só o lado que toca nele) */
+  clip-path: inset(calc(max(0, var(--_ds-y)) * -40px) -40px calc(max(0, -1 * var(--_ds-y)) * -40px) -40px);
+  animation: ds-menu-desenrola var(--duration-fast, 175ms) var(--ease-entrance, ease-out) both;
+}
+
+@keyframes ds-menu-desenrola {
+  from {
+    /* fechado junto à borda do botão */
+    clip-path: inset(calc(max(0, var(--_ds-y)) * 100%) -40px calc(max(0, -1 * var(--_ds-y)) * 100%) -40px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [popover][data-ds-colado] > * {
+    animation: none;
+  }
+}

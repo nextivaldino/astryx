@@ -1,0 +1,105 @@
+/*
+ * Cores — paleta GNOME / libadwaita (Adwaita), claro e escuro.
+ * Fonte: libadwaita CSS variables (gnome.pages.gitlab.gnome.org/libadwaita).
+ *
+ * Mapeia os tokens de cor do Astryx para os papéis do GNOME:
+ *   janela (window) → corpo da página     vista (view) → campos, listas, superfícies
+ *   card → cartões                         popover → menus      destaque → azul GNOME
+ *
+ * light-dark(claro, escuro): o modo segue o sistema (ou html[data-theme]).
+ * Fora de @layer para ganhar ao tema base.
+ */
+
+[data-astryx-theme] {
+  /* ── Referência Adwaita (para usar noutros ficheiros) ── */
+  --ds-adw-fg: light-dark(rgb(0 0 6 / 80%), #ffffff);
+  /* azul (família GNOME, afinado em OKLCH para texto branco a ≥ 4.5:1) */
+  --ds-adw-accent-bg: #0073df;
+  --ds-adw-accent: light-dark(#005bb3, #9dc7fe);
+  --ds-adw-destructive-bg: light-dark(#e01b24, #c01c28);
+  --ds-adw-headerbar-bg: light-dark(#ffffff, #2e2e32);
+  --ds-adw-sidebar-bg: light-dark(#ebebed, #2e2e32);
+
+  /* ── Superfícies ── */
+  --color-background-body: light-dark(#fafafb, #222226);          /* window */
+  --color-background-surface: light-dark(#ffffff, #1d1d20);       /* view */
+  --color-background-card: light-dark(#ffffff, rgb(255 255 255 / 8%));
+  --color-background-popover: light-dark(#ffffff, #36363a);
+  --color-background-muted: var(--ds-adw-sidebar-bg);
+  /* fundo de botões normais: tom do texto a 10%, como os botões Adwaita */
+  --color-background-gray: light-dark(rgb(0 0 6 / 10%), rgb(255 255 255 / 10%));
+  --color-neutral: light-dark(rgb(0 0 6 / 6%), rgb(255 255 255 / 10%));
+
+  /* ── Texto e ícones ── */
+  --color-text-primary: var(--ds-adw-fg);
+  /* GNOME usa 55% ("dimmed"); subimos para 60% no claro para cumprir contraste 4.5:1. */
+  --color-text-secondary: light-dark(rgb(0 0 6 / 60%), rgb(255 255 255 / 60%));
+  --color-text-disabled: light-dark(rgb(0 0 6 / 32%), rgb(255 255 255 / 32%));
+  --color-icon-primary: var(--ds-adw-fg);
+  --color-icon-secondary: var(--color-text-secondary);
+
+  /* ── Destaque (accent) ── */
+  --color-accent: var(--ds-adw-accent-bg);
+  --color-on-accent: #ffffff;
+  --color-text-accent: var(--ds-adw-accent);
+  --color-icon-accent: var(--ds-adw-accent);
+  --color-accent-muted: color-mix(in srgb, var(--ds-adw-accent-bg) 22%, transparent);
+
+  /* ── Bordas ──
+     Separadores e cartões: --card-shade-color do GNOME (7% / escuro 36% de preto,
+     que em fundo escuro equivale a uma linha subtil → usamos branco a 8%).
+     Contornos de controlos (campos): --border-opacity do GNOME, 15%. */
+  --color-border: light-dark(rgb(0 0 6 / 7%), rgb(255 255 255 / 8%));
+  --color-border-emphasized: light-dark(rgb(0 0 6 / 15%), rgb(255 255 255 / 15%));
+  /* Calhas (Slider): mesmo tom das outras calhas (ProgressBar, Stepper). */
+  --color-track: light-dark(rgb(0 0 6 / 15%), rgb(255 255 255 / 15%));
+
+  /* ── Interação ── */
+  --color-overlay-hover: light-dark(rgb(0 0 6 / 5%), rgb(255 255 255 / 7%));
+  --color-overlay-pressed: light-dark(rgb(0 0 6 / 12%), rgb(255 255 255 / 14%));
+  --color-shadow: light-dark(rgb(0 0 6 / 12%), rgb(0 0 6 / 36%));
+
+  /* ── Sombras: leves e curtas (limpas, mas visíveis) ──
+     Substituem as do Astryx (menus, diálogos, Toast, popovers, dock…).
+     No escuro: um fio de luz à volta, porque a sombra quase não se vê. */
+  --shadow-low:
+    0 1px 2px light-dark(rgb(0 0 6 / 6%), rgb(0 0 0 / 30%)),
+    0 2px 5px light-dark(rgb(0 0 6 / 5%), rgb(0 0 0 / 24%)),
+    inset 0 0 0 1px light-dark(transparent, rgb(255 255 255 / 7%));
+  --shadow-med:
+    0 1px 2px light-dark(rgb(0 0 6 / 6%), rgb(0 0 0 / 30%)),
+    0 2px 6px light-dark(rgb(0 0 6 / 5%), rgb(0 0 0 / 24%)),
+    inset 0 0 0 1px light-dark(transparent, rgb(255 255 255 / 9%));
+  --shadow-high:
+    0 1px 3px light-dark(rgb(0 0 6 / 7%), rgb(0 0 0 / 32%)),
+    0 4px 10px light-dark(rgb(0 0 6 / 6%), rgb(0 0 0 / 26%)),
+    inset 0 0 0 1px light-dark(transparent, rgb(255 255 255 / 10%));
+
+  /* ── Estados (Adwaita) ── */
+  --color-error: var(--ds-adw-destructive-bg);
+  --color-on-error: #ffffff;
+  --color-text-error: light-dark(#c30000, #ff938c);
+  --color-icon-error: var(--color-text-error);
+  --color-error-muted: color-mix(in srgb, var(--ds-adw-destructive-bg) 18%, transparent);
+
+  --color-success: light-dark(#2ec27e, #26a269);
+  --color-on-success: #ffffff;
+  --color-text-success: light-dark(#007c3d, #78e9ab);
+  --color-icon-success: var(--color-text-success);
+  --color-success-muted: color-mix(in srgb, #2ec27e 20%, transparent);
+
+  --color-warning: light-dark(#e5a50a, #cd9309);
+  --color-on-warning: rgb(0 0 0 / 80%);
+  --color-text-warning: light-dark(#905400, #ffc252);
+  --color-icon-warning: var(--color-text-warning);
+  --color-warning-muted: color-mix(in srgb, #e5a50a 22%, transparent);
+
+  --color-info: var(--ds-adw-accent-bg);
+  --color-on-info: #ffffff;
+  --color-text-info: var(--ds-adw-accent);
+  --color-icon-info: var(--ds-adw-accent);
+  --color-info-muted: var(--color-accent-muted);
+
+  background-color: var(--color-background-body);
+  color: var(--color-text-primary);
+}

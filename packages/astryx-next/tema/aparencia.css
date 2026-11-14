@@ -1,0 +1,110 @@
+/*
+ * Aparência — escolhas do utilizador (Definições → Aparência), lidas dos
+ * atributos que comum/aparencia.js põe no <html>:
+ *   data-estilo · data-fundo · data-destaque · data-densidade ·
+ *   data-lado-criar · data-reduzir-efeitos   (+ data-theme para o modo)
+ *
+ * Paleta Coral: KARGA (shared/karga-coral.css). Fora de @layer.
+ * Cada regra apanha o próprio <html> (o Astryx põe lá o data-astryx-theme e é
+ * ele que pinta o fundo) e os temas aninhados.
+ */
+
+/* ══ Destaque ══════════════════════════════════════════════════════════
+   Paleta afinada em OKLCH: mesma luminosidade em todas (o mesmo peso visual),
+   saturação alta, e texto do botão a ≥ 4.5:1 (WCAG AA). Texto de destaque:
+   mais escuro no claro, mais claro no escuro. O âmbar usa texto escuro
+   (um âmbar escuro o suficiente para texto branco fica acastanhado). */
+:root[data-destaque='coral'], :root[data-destaque='coral'] [data-astryx-theme] { --ds-adw-accent-bg: #c94636; --ds-adw-accent: light-dark(#ac281b, #feac9e); }
+:root[data-destaque='ceu'], :root[data-destaque='ceu'] [data-astryx-theme] { --ds-adw-accent-bg: #5164e9; --ds-adw-accent: light-dark(#3f4fbb, #b0c1fe); }
+:root[data-destaque='salvia'], :root[data-destaque='salvia'] [data-astryx-theme] { --ds-adw-accent-bg: #038342; --ds-adw-accent: light-dark(#016732, #86db9d); }
+:root[data-destaque='lavanda'], :root[data-destaque='lavanda'] [data-astryx-theme] { --ds-adw-accent-bg: #8a4fd7; --ds-adw-accent: light-dark(#6e3ead, #ceb5ff); }
+:root[data-destaque='mar'], :root[data-destaque='mar'] [data-astryx-theme] { --ds-adw-accent-bg: #007e7b; --ds-adw-accent: light-dark(#056260, #4eddd8); }
+:root[data-destaque='rosa'], :root[data-destaque='rosa'] [data-astryx-theme] { --ds-adw-accent-bg: #c82d7c; --ds-adw-accent: light-dark(#a02262, #ffa5c8); }
+:root[data-destaque='ambar'], :root[data-destaque='ambar'] [data-astryx-theme] {
+  --ds-adw-accent-bg: #f9ad26;
+  --ds-adw-accent: light-dark(#915b02, #fac463);
+  --color-on-accent: #3b2301;
+}
+
+/* ══ Estilo Coral — quente e expressivo (KARGA) ════════════════════════
+   Neutros quentes (papel e tinta, sem preto puro), volume mais marcado. */
+:root[data-estilo='coral'], :root[data-estilo='coral'] [data-astryx-theme] {
+  --color-background-body: light-dark(#f7f4ef, #1b1714);
+  --color-background-surface: light-dark(#fffdf9, #221d1a);
+  --color-background-card: light-dark(#fffdf9, rgb(255 245 235 / 7%));
+  --color-background-popover: light-dark(#fffdf9, #2c2622);
+  --color-background-muted: light-dark(#efe9e1, #2c2622);
+  --ds-adw-headerbar-bg: light-dark(#fffdf9, #2c2622);
+  --ds-adw-sidebar-bg: light-dark(#efe9e1, #2c2622);
+  --ds-adw-fg: light-dark(#2b2521, #f6efe8);
+  --color-text-secondary: light-dark(rgb(43 37 33 / 66%), rgb(246 239 232 / 62%));
+  --color-text-disabled: light-dark(rgb(43 37 33 / 34%), rgb(246 239 232 / 32%));
+  --color-background-gray: light-dark(rgb(60 40 20 / 9%), rgb(255 240 220 / 10%));
+  --color-border: light-dark(rgb(60 40 20 / 8%), rgb(255 240 220 / 9%));
+  --color-border-emphasized: light-dark(rgb(60 40 20 / 16%), rgb(255 240 220 / 16%));
+  --color-track: light-dark(rgb(60 40 20 / 14%), rgb(255 240 220 / 14%));
+  /* volume mais marcado */
+  --ds-vol-preenchido: inset 0 1px 0 rgb(255 255 255 / 38%), inset 0 -1px 0 rgb(40 20 0 / 16%);
+  --ds-botao-volume: inset 0 1px 0 rgb(255 255 255 / 30%), inset 0 -1px 0 rgb(40 20 0 / 12%);
+}
+
+/* ══ Fundo ═════════════════════════════════════════════════════════════
+   Tons de papel do KARGA no claro; no escuro, o mesmo tom muito diluído. */
+:root[data-fundo='marfim'], :root[data-fundo='marfim'] [data-astryx-theme] { --color-background-body: light-dark(#f7f4ef, color-mix(in srgb, #a88e62 7%, #1c1b1a)); }
+:root[data-fundo='linho'], :root[data-fundo='linho'] [data-astryx-theme] { --color-background-body: light-dark(#f4eee4, color-mix(in srgb, #c2aa80 8%, #1c1b1a)); }
+:root[data-fundo='salvia'], :root[data-fundo='salvia'] [data-astryx-theme] { --color-background-body: light-dark(#e3e9df, color-mix(in srgb, #5a966c 9%, #1b1c1b)); }
+:root[data-fundo='nevoa'], :root[data-fundo='nevoa'] [data-astryx-theme] { --color-background-body: light-dark(#e1e8ec, color-mix(in srgb, #36918c 8%, #1b1c1d)); }
+:root[data-fundo='ceu'], :root[data-fundo='ceu'] [data-astryx-theme] { --color-background-body: light-dark(#e4ecff, color-mix(in srgb, #5f7fdc 10%, #1b1b1f)); }
+:root[data-fundo='coral'], :root[data-fundo='coral'] [data-astryx-theme] { --color-background-body: light-dark(#fee4da, color-mix(in srgb, #f2674f 9%, #1c1a1a)); }
+:root[data-fundo='lavanda'], :root[data-fundo='lavanda'] [data-astryx-theme] { --color-background-body: light-dark(#eeeafa, color-mix(in srgb, #8470cf 10%, #1c1b1f)); }
+:root[data-fundo='grafite'], :root[data-fundo='grafite'] [data-astryx-theme] { --color-background-body: light-dark(#e9e9ec, #101012); }
+
+/* Aurora: manchas suaves da cor de destaque e lavanda (só CSS, sem imagens) */
+:root[data-fundo='aurora'], :root[data-fundo='aurora'] [data-astryx-theme] {
+  background-image:
+    radial-gradient(60vmax 40vmax at 10% 0%, color-mix(in srgb, var(--ds-adw-accent-bg) 20%, transparent), transparent 70%),
+    radial-gradient(50vmax 40vmax at 100% 35%, color-mix(in srgb, #8470cf 16%, transparent), transparent 70%),
+    radial-gradient(60vmax 40vmax at 40% 100%, color-mix(in srgb, #36918c 14%, transparent), transparent 70%);
+  background-attachment: fixed;
+}
+
+/* ══ Densidade ═════════════════════════════════════════════════════════
+   Escala de espaços e alturas dos controlos (o Astryx usa estes tokens). */
+:root[data-densidade='compacta'], :root[data-densidade='compacta'] [data-astryx-theme] {
+  --spacing-1: 0.2rem; --spacing-2: 0.4rem; --spacing-3: 0.625rem;
+  --spacing-4: 0.875rem; --spacing-5: 1.125rem; --spacing-6: 1.25rem;
+  --size-element-sm: 24px; --size-element-md: 28px; --size-element-lg: 32px;
+}
+:root[data-densidade='confortavel'], :root[data-densidade='confortavel'] [data-astryx-theme] {
+  --spacing-1: 0.3rem; --spacing-2: 0.625rem; --spacing-3: 0.875rem;
+  --spacing-4: 1.125rem; --spacing-5: 1.375rem; --spacing-6: 1.75rem;
+  --size-element-sm: 32px; --size-element-md: 40px; --size-element-lg: 44px;
+}
+:root[data-densidade='compacta'] .nm-dock { --nm-barra: 56px; --nm-espaco: 5px; }
+:root[data-densidade='confortavel'] .nm-dock { --nm-barra: 72px; --nm-espaco: 7px; }
+
+/* ══ Forma dos botões ══════════════════════════════════════════════════
+   Pílula: extremidades redondas em todos os controlos de ação (os só com
+   ícone ficam circulares; os itens do SegmentedControl acompanham, concêntricos).
+   Campos e cartões não mudam. */
+:root[data-forma-botoes='pilula'] :is(.astryx-button, .astryx-button-group, .astryx-toggle-button, .astryx-toggle-button-group, .astryx-segmented-control) {
+  --radius-element: 9999px;
+}
+
+/* ══ Dock: lado do botão Criar ═════════════════════════════════════════ */
+:root[data-lado-criar='esquerda'] .nm-barra { flex-direction: row-reverse; }
+
+/* ══ Reduzir efeitos (telemóveis fracos, ou preferência) ═══════════════ */
+:root[data-reduzir-efeitos] *,
+:root[data-reduzir-efeitos] *::before,
+:root[data-reduzir-efeitos] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+:root[data-reduzir-efeitos] .nm-dock {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  --nm-material: var(--color-background-popover);
+}
+:root[data-reduzir-efeitos], :root[data-reduzir-efeitos] [data-astryx-theme] { background-attachment: scroll; }

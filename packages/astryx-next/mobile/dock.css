@@ -1,0 +1,551 @@
+/*
+ * Dock — next-mobile. Uma cápsula de vidro no fundo do ecrã; o painel cresce
+ * para cima a partir dela. Só tokens do tema Astryx-NEXT (cores Adwaita, volume…).
+ *
+ * Concêntrica: cápsula 64px (raio 33 = 32 + 1 de contorno); botões de 52px
+ * redondos com 6px de espaço → 26 + 6 + 1 = 33. Faixa igual em todo o contorno.
+ */
+
+.nm-dock {
+  --nm-barra: 64px;
+  --nm-espaco: 6px;
+  --nm-botao: calc(var(--nm-barra) - 2 * var(--nm-espaco));
+  --nm-raio: calc(var(--nm-barra) / 2 + 1px);
+  --nm-fundo: calc(12px + env(safe-area-inset-bottom, 0px));
+  --nm-material: color-mix(in srgb, var(--color-background-popover) 84%, transparent);
+
+  position: fixed;
+  z-index: 40;
+  inset-inline: 10px;
+  inset-block-end: var(--nm-fundo);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--nm-raio);
+  background-color: var(--nm-material);
+  box-shadow: var(--shadow-med), inset 0 1px 0 light-dark(rgb(255 255 255 / 60%), rgb(255 255 255 / 6%));
+  color: var(--color-text-primary);
+  transition:
+    transform var(--duration-medium, 300ms) var(--ease-standard, ease-out),
+    opacity var(--duration-fast, 150ms) var(--ease-standard, ease-out),
+    width var(--duration-medium, 300ms) var(--ease-standard, ease-out);
+}
+/* Vidro: só onde o browser suporta (e é barato o suficiente) */
+@supports (backdrop-filter: blur(1px)) {
+  .nm-dock {
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+  }
+}
+.nm-dock[data-aberta] {
+  --nm-material: color-mix(in srgb, var(--color-background-popover) 96%, transparent);
+}
+
+/* Tablet: centrada; alarga com a ilha ou com o painel aberto */
+.nm-dock[data-tablet] {
+  inset-inline: auto;
+  left: 50%;
+  width: min(620px, calc(100vw - 32px));
+  transform: translateX(-50%);
+}
+.nm-dock[data-tablet]:is([data-ilha], [data-aberta]) { width: min(760px, calc(100vw - 32px)); }
+
+/* Encolhe ao percorrer */
+.nm-dock[data-compacta] { --nm-barra: 54px; --nm-espaco: 5px; }
+
+/* ══ Comportamento escolhido em Definições → Dock (atributos no <html>) ══ */
+/* Tema inverso: a dock usa o esquema de cores oposto ao da app. Todas as
+   cores do sistema são light-dark(), por isso tudo dentro dela inverte. */
+:root[data-dock-tema='inverso'] .nm-dock { color-scheme: dark; }
+:root[data-dock-tema='inverso'][data-theme='dark'] .nm-dock { color-scheme: light; }
+@media (prefers-color-scheme: dark) {
+  :root[data-dock-tema='inverso']:not([data-theme='light']) .nm-dock { color-scheme: light; }
+}
+/* Material sólido: sem vidro */
+:root[data-dock-material='solido'] .nm-dock {
+  --nm-material: var(--color-background-popover);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+/* Não encolher ao percorrer */
+:root[data-dock-encolher='nao'] .nm-dock[data-compacta] { --nm-barra: 64px; --nm-espaco: 6px; }
+/* Não esconder com o teclado */
+:root[data-dock-esconder='nao'] .nm-dock[data-escondida] { transform: none; opacity: 1; pointer-events: auto; }
+:root[data-dock-esconder='nao'] .nm-dock[data-tablet][data-escondida] { transform: translateX(-50%); }
+:root[data-dock-esconder='nao'] .nm-linha { display: none; }
+
+/* Dock de amostra (pré-visualização nas Definições): a mesma dock, parada */
+.nm-dock.nm-dock-amostra {
+  position: relative;
+  inset: auto;
+  left: auto;
+  inline-size: 100%;
+  transform: none;
+  z-index: auto;
+}
+
+/* Escondida (telemóvel, teclado aberto) */
+.nm-dock[data-escondida] {
+  transform: translateY(130%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nm-veu {
+  position: fixed;
+  inset: 0;
+  z-index: 39;
+  background: light-dark(rgb(0 0 6 / 22%), rgb(0 0 0 / 45%));
+  animation: nm-aparecer var(--duration-fast, 150ms) ease-out;
+}
+@keyframes nm-aparecer { from { opacity: 0; } }
+
+/* ── Painel: cresce para cima ── */
+.nm-painel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration-medium, 300ms) var(--ease-standard, ease-out);
+}
+.nm-dock[data-aberta] .nm-painel { grid-template-rows: 1fr; }
+.nm-painel-dentro {
+  min-block-size: 0;
+  overflow: hidden;
+}
+.nm-painel-corpo {
+  max-block-size: calc(100dvh - var(--nm-barra) - var(--nm-fundo) - 120px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 10px 8px;
+}
+.nm-dock[data-cheio] .nm-painel-corpo { min-block-size: 55dvh; }
+.nm-painel-topo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 12px 6px 20px;
+}
+.nm-puxador {
+  position: absolute;
+  inset-block-start: 6px;
+  left: 50%;
+  translate: -50% 0;
+  inline-size: 40px;
+  block-size: 5px;
+  border-radius: 999px;
+  background: var(--color-border-emphasized);
+  cursor: grab;
+  touch-action: none;
+}
+.nm-puxador::before { content: ''; position: absolute; inset: -12px -20px; } /* área de toque maior */
+.nm-painel-titulo {
+  flex: 1;
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 650;
+}
+
+/* ── Barra ── */
+.nm-barra {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  block-size: var(--nm-barra);
+  padding: var(--nm-espaco);
+  transition: block-size var(--duration-fast, 150ms) var(--ease-standard, ease-out);
+}
+.nm-dock[data-aberta] .nm-barra { border-block-start: 1px solid var(--color-border); }
+
+.nm-botao,
+.nm-separador,
+.nm-criar,
+.nm-ilha {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 100%;
+  border-radius: 999px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+:is(.nm-botao, .nm-separador, .nm-criar, .nm-ilha):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+/* 🔔 avisos, com selo */
+.nm-botao {
+  position: relative;
+  aspect-ratio: 1;
+  flex: none;
+  font-size: 22px;
+  color: var(--color-text-secondary);
+}
+.nm-botao:hover, .nm-separador:hover { background: var(--color-overlay-hover); }
+.nm-avisos { animation: nm-ilha-entra var(--duration-medium, 300ms) cubic-bezier(0.34, 1.56, 0.64, 1); }
+.nm-botao[aria-expanded='true'] { color: var(--color-text-accent); background: var(--color-accent-muted); }
+.nm-selo {
+  position: absolute;
+  inset-block-start: 6px;
+  inset-inline-end: 6px;
+  min-inline-size: 18px;
+  block-size: 18px;
+  padding-inline: 4px;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 2px solid var(--color-background-popover);
+  background: var(--ds-adw-destructive-bg);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: var(--ds-vol-preenchido);
+}
+
+/* Separadores: só o atual mostra o nome (telemóvel) */
+.nm-separadores {
+  flex: 1;
+  display: flex;
+  /* o 1.º encosta à esquerda com o mesmo espaço do ＋ à direita (concêntrico
+     com a cápsula); o espaço livre fica só entre os separadores */
+  justify-content: space-between;
+  gap: 2px;
+  block-size: 100%;
+  min-inline-size: 0;
+}
+.nm-separador > svg, .nm-separador > .astryx-icon { flex: none; } /* o ícone nunca encolhe */
+/* Com pouco espaço: o ativo nunca encolhe; os outros cortam o nome dentro da pílula */
+.nm-separador { overflow: hidden; }
+.nm-separador[data-atual] { flex-shrink: 0; }
+/* Só ícone (sem nome visível): mais estreito, mas com área de toque ≥ 40px */
+.nm-separador:not([data-atual]):not([data-frequente]) { min-inline-size: 40px; padding-inline: 10px; }
+:root[data-nomes-dock='ativo'] .nm-separador[data-frequente]:not([data-atual]) { min-inline-size: 40px; padding-inline: 10px; }
+.nm-separador {
+  gap: 6px;
+  padding-inline: 14px;
+  min-inline-size: var(--nm-botao);
+  font-size: 20px;
+  color: var(--color-text-secondary);
+  transition: background-color var(--duration-fast, 150ms) ease-out, color var(--duration-fast, 150ms) ease-out;
+}
+.nm-separador-nome {
+  display: none;
+  font-size: var(--font-size-sm);
+  font-weight: 620;
+  white-space: nowrap;
+}
+.nm-separador[data-atual] {
+  /* pílula do selecionado: cor de destaque sólida, mais larga, com brilho
+     suave nas bordas (fio de luz por dentro + halo da própria cor) */
+  padding-inline: 20px;
+  color: var(--color-on-accent);
+  background: var(--color-accent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, white 28%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 30%),
+    inset 0 -1px 0 rgb(0 0 6 / 14%),
+    0 0 0 1px color-mix(in srgb, var(--color-accent) 35%, transparent),
+    0 2px 10px color-mix(in srgb, var(--color-accent) 38%, transparent);
+}
+.nm-separador[data-atual]:hover { background: color-mix(in srgb, var(--color-accent) 92%, black); }
+.nm-separador[data-atual] .nm-separador-nome { display: inline; }
+
+/* Nomes na dock (Aparência → Dock), lido de <html data-nomes-dock>:
+   ativo: só o atual · frequentes (predefinido): atual + os mais usados · todos */
+:root:not([data-nomes-dock='ativo']) .nm-separador[data-frequente] .nm-separador-nome { display: inline; }
+:root[data-nomes-dock='todos'] .nm-dock[data-tablet] .nm-separador-nome { display: inline; }
+/* Todos, no telemóvel: nome pequeno por baixo do ícone, para caber */
+:root[data-nomes-dock='todos'] .nm-dock:not([data-tablet]) .nm-separador {
+  flex-direction: column;
+  gap: 1px;
+  padding-inline: 4px;
+  min-inline-size: 0;
+  flex: 1;
+  font-size: 18px;
+}
+:root[data-nomes-dock='todos'] .nm-dock:not([data-tablet]) .nm-separador > :first-child {
+  block-size: 22px; /* mesma altura para todos os ícones (as reticências são maiores) */
+  display: grid;
+  place-items: center;
+}
+:root[data-nomes-dock='todos'] .nm-dock:not([data-tablet]) .nm-separador-nome {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  max-inline-size: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Com ilha no telemóvel: os separadores dão lugar à ilha */
+.nm-dock:not([data-tablet])[data-ilha] .nm-separadores { display: none; }
+
+/* ＋ criar: círculo de destaque com volume; vira ✕ quando aberto */
+.nm-criar {
+  aspect-ratio: 1;
+  flex: none;
+  font-size: 26px;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  box-shadow: 0 0 0 1px light-dark(rgb(0 0 6 / 10%), rgb(0 0 0 / 30%)), var(--ds-vol-preenchido);
+  transition: transform var(--duration-medium, 300ms) cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.nm-criar svg { transition: rotate var(--duration-medium, 300ms) cubic-bezier(0.34, 1.56, 0.64, 1); }
+.nm-criar[data-aberto] svg { rotate: 135deg; }
+.nm-criar:active { transform: scale(0.9); box-shadow: 0 0 0 1px rgb(0 0 6 / 10%), var(--ds-vol-calha); }
+
+/* ── Ilha de aviso ── */
+.nm-ilha-slot { flex: 1; min-inline-size: 0; block-size: 100%; display: flex; }
+.nm-ilha {
+  --ilha: var(--color-info-muted);
+  --ilha-tx: var(--color-text-info);
+  flex: 1;
+  min-inline-size: 0;
+  justify-content: flex-start;
+  gap: 10px;
+  padding-inline: 14px;
+  background: var(--ilha);
+  color: var(--ilha-tx);
+  font-size: 20px;
+  animation: nm-ilha-entra var(--duration-medium, 300ms) cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.nm-ilha[data-tipo='sucesso'] { --ilha: var(--color-success-muted); --ilha-tx: var(--color-text-success); }
+.nm-ilha[data-tipo='atencao'] { --ilha: var(--color-warning-muted); --ilha-tx: var(--color-text-warning); }
+.nm-ilha[data-tipo='erro'] { --ilha: var(--color-error-muted); --ilha-tx: var(--color-text-error); }
+@keyframes nm-ilha-entra { from { opacity: 0; transform: scale(0.85); } }
+.nm-ilha-texto {
+  display: grid;
+  min-inline-size: 0;
+  line-height: 1.2;
+  text-align: start;
+}
+.nm-ilha-texto strong, .nm-ilha-texto span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.nm-ilha-texto strong { font-size: var(--font-size-sm); font-weight: 650; }
+.nm-ilha-texto span { font-size: var(--font-size-xs); opacity: 0.85; }
+.nm-ilha-mais {
+  margin-inline-start: auto;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--ilha-tx);
+  color: var(--color-background-popover);
+  font-size: var(--font-size-2xs);
+  font-weight: 700;
+}
+
+/* ── Linha da dock escondida ── */
+.nm-linha {
+  all: unset;
+  position: fixed;
+  z-index: 40;
+  left: 50%;
+  inset-block-end: calc(4px + env(safe-area-inset-bottom, 0px));
+  translate: -50% 0;
+  display: grid;
+  place-items: center;
+  inline-size: 140px;
+  block-size: 28px;
+  cursor: pointer;
+}
+.nm-linha span {
+  inline-size: 120px;
+  block-size: 5px;
+  border-radius: 999px;
+  background: var(--color-text-secondary);
+  opacity: 0.5;
+}
+
+/* ── Opções dos painéis (ícone + texto, sem caixa) ── */
+.nm-opcao {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  inline-size: 100%;
+  padding: 12px 10px;
+  border-radius: var(--radius-element);
+  cursor: pointer;
+}
+.nm-opcao:hover { background: var(--color-overlay-hover); }
+.nm-opcao:active { background: var(--color-overlay-pressed); }
+.nm-opcao:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+.nm-opcao:disabled { opacity: 0.5; cursor: default; }
+.nm-opcao-icone { display: grid; place-items: center; font-size: 22px; color: var(--color-text-accent); }
+/* avisos: ícone na cor do tipo */
+.nm-opcao[data-tipo='erro'] .nm-opcao-icone { color: var(--color-text-error); }
+.nm-opcao[data-tipo='atencao'] .nm-opcao-icone { color: var(--color-text-warning); }
+.nm-opcao[data-tipo='sucesso'] .nm-opcao-icone { color: var(--color-text-success); }
+.nm-opcao-texto { display: grid; line-height: 1.3; }
+.nm-opcao-titulo { font-weight: 600; }
+.nm-opcao-contexto { font-size: var(--font-size-xs); color: var(--color-text-secondary); }
+.nm-grelha { display: grid; gap: 2px; }
+.nm-dock[data-tablet] .nm-grelha { grid-template-columns: 1fr 1fr; }
+
+/* Espaço para a dock não tapar o fim das páginas */
+body:has(.nm-dock) { padding-block-end: calc(64px + 24px + env(safe-area-inset-bottom, 0px)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .nm-dock, .nm-painel, .nm-criar, .nm-criar svg, .nm-ilha, .nm-separador { transition: none; animation: none; }
+}
+
+/* ══ Bolha de avisos (dock cheia, telemóvel) ════════════════════════════
+   O 🔔 sai da dock e vira uma "dock menor" redonda à esquerda, da mesma
+   altura. A dock principal desliza para lhe dar lugar. */
+.nm-dock[data-com-bolha] {
+  inset-inline-start: calc(10px + var(--nm-barra) + 2px + 8px); /* bolha (= altura da dock) + espaço */
+  transition: inset-inline-start var(--duration-medium, 300ms) var(--ease-standard, ease-out), transform var(--duration-medium, 300ms) var(--ease-standard, ease-out), opacity var(--duration-fast, 150ms) ease-out;
+}
+.nm-bolha {
+  --nm-barra: 64px;
+  all: unset;
+  box-sizing: border-box;
+  position: fixed;
+  z-index: 40;
+  inset-inline-start: 10px;
+  inset-block-end: calc(12px + env(safe-area-inset-bottom, 0px));
+  display: grid;
+  place-items: center;
+  inline-size: calc(var(--nm-barra) + 2px);
+  block-size: calc(var(--nm-barra) + 2px);
+  border-radius: 50%;
+  background: var(--ds-adw-destructive-bg);
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 22%),
+    inset 0 1px 0 rgb(255 255 255 / 30%),
+    inset 0 -1px 0 rgb(0 0 6 / 16%),
+    var(--shadow-med);
+  animation: nm-ilha-entra var(--duration-medium, 300ms) cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition:
+    inline-size var(--duration-fast, 150ms) var(--ease-standard, ease-out),
+    block-size var(--duration-fast, 150ms) var(--ease-standard, ease-out),
+    transform var(--duration-medium, 300ms) var(--ease-standard, ease-out),
+    opacity var(--duration-fast, 150ms) ease-out;
+}
+:root[data-densidade='compacta'] .nm-bolha { --nm-barra: 56px; }
+:root[data-densidade='confortavel'] .nm-bolha { --nm-barra: 72px; }
+/* Acompanha a dock quando ela encolhe ao percorrer (mesma altura, sempre) */
+.nm-bolha[data-compacta] { --nm-barra: 54px; }
+:root[data-dock-encolher='nao'] .nm-bolha[data-compacta] { --nm-barra: 64px; }
+.nm-bolha:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+.nm-bolha:active { transform: scale(0.92); }
+/* o sino abana e cresce um pouco ao mesmo tempo, como se estivesse a tocar
+   (≈1s), e descansa (≈3s). Tudo suave: o tamanho sobe e desce com o abanão. */
+.nm-bolha > svg {
+  transform-origin: 50% 8%;
+  animation: nm-sino 3.5s ease-in-out infinite;
+}
+@keyframes nm-sino {
+  0%, 38%, 100% { rotate: 0deg; scale: 1; }
+  4% { rotate: 22deg; scale: 1.1; }
+  9% { rotate: -20deg; scale: 1.18; }
+  14% { rotate: 16deg; scale: 1.2; }
+  19% { rotate: -12deg; scale: 1.18; }
+  24% { rotate: 8deg; scale: 1.12; }
+  29% { rotate: -4deg; scale: 1.06; }
+  34% { rotate: 1deg; scale: 1.02; }
+}
+/* A bolha respira com o sino: encolhe e volta, sem nunca passar da altura
+   da dock (escala máxima = 1). Mesmo ritmo do sino. */
+.nm-bolha { animation: nm-ilha-entra var(--duration-medium, 300ms) cubic-bezier(0.34, 1.56, 0.64, 1), nm-bolha-respira 3.5s ease-in-out infinite; }
+@keyframes nm-bolha-respira {
+  0%, 38%, 100% { scale: 1; }
+  9% { scale: 0.88; }
+  19% { scale: 0.97; }
+  29% { scale: 0.92; }
+}
+.nm-bolha-n {
+  position: absolute;
+  inset-block-start: 6px;
+  inset-inline-end: 4px;
+  min-inline-size: 20px;
+  block-size: 20px;
+  padding-inline: 5px;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ds-adw-destructive-bg);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 1px 2px rgb(0 0 6 / 25%);
+}
+.nm-bolha[data-escondida] { transform: translateY(130%); opacity: 0; pointer-events: none; }
+
+/* Mini-dock: cresce da bolha (máscara circular a partir dela) */
+.nm-bolha-painel {
+  position: fixed;
+  inset: auto;
+  inset-inline-start: 10px;
+  inset-block-end: calc(12px + env(safe-area-inset-bottom, 0px) + 64px + 10px);
+  margin: 0;
+  inline-size: min(330px, calc(100vw - 20px));
+  box-sizing: border-box;
+  padding: 10px;
+  border: 0;
+  border-radius: 24px;
+  background: var(--color-background-popover);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-high), inset 0 0 0 1px var(--color-border);
+  clip-path: circle(150% at 33px calc(100% + 42px));
+  transition:
+    clip-path var(--duration-medium, 300ms) var(--ease-entrance, ease-out),
+    display var(--duration-medium, 300ms) allow-discrete,
+    overlay var(--duration-medium, 300ms) allow-discrete;
+}
+.nm-bolha-painel:not(:popover-open) { clip-path: circle(0 at 33px calc(100% + 42px)); }
+@starting-style { .nm-bolha-painel:popover-open { clip-path: circle(0 at 33px calc(100% + 42px)); } }
+.nm-bolha-painel::backdrop { background: transparent; }
+.nm-bolha-topo { display: flex; align-items: baseline; justify-content: space-between; padding: 6px 10px 8px; }
+.nm-bolha-topo span { font-size: var(--font-size-xs); color: var(--color-text-secondary); }
+.nm-bolha-acoes { display: flex; justify-content: flex-end; gap: 8px; padding: 8px 6px 4px; border-block-start: 1px solid var(--color-border); margin-block-start: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .nm-bolha, .nm-bolha > svg, .nm-bolha-painel { animation: none; transition: none; }
+}
+:root[data-reduzir-efeitos] :is(.nm-bolha, .nm-bolha > svg) { animation: none; }
+
+/* ══ Faixa por trás da dock ════════════════════════════════════════════
+   O conteúdo que passa por baixo funde-se com o fundo da app e fica
+   ligeiramente desfocado (mais junto à base): a dock e a bolha destacam-se.
+   Não apanha toques. Com "Reduzir efeitos": só a cor, sem desfoque. */
+.nm-dock-fundo {
+  position: fixed;
+  z-index: 38;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: calc(64px + 12px + 40px + env(safe-area-inset-bottom, 0px));
+  pointer-events: none;
+  background: linear-gradient(to top,
+    var(--color-background-body) 0%,
+    color-mix(in srgb, var(--color-background-body) 85%, transparent) 35%,
+    color-mix(in srgb, var(--color-background-body) 40%, transparent) 70%,
+    transparent 100%);
+  transition: opacity var(--duration-fast, 150ms) ease-out;
+}
+@supports (backdrop-filter: blur(1px)) {
+  .nm-dock-fundo {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    /* desfoque progressivo: nada no topo da faixa, mais junto à base */
+    mask-image: linear-gradient(to top, black 45%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to top, black 45%, transparent 100%);
+  }
+}
+.nm-dock-fundo[data-escondida] { opacity: 0; }
+:root[data-reduzir-efeitos] .nm-dock-fundo { backdrop-filter: none; -webkit-backdrop-filter: none; }
+@media (prefers-reduced-transparency: reduce) {
+  .nm-dock-fundo { backdrop-filter: none; -webkit-backdrop-filter: none; }
+}

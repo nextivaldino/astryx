@@ -1,0 +1,98 @@
+/*
+ * Categoria Action — espaço interior e comportamento dos controlos de ação.
+ *
+ * Componentes abrangidos: Button (e tudo o que é Button por dentro: IconButton,
+ * ToggleButton, gatilhos de DropdownMenu/MoreMenu, botões da Toolbar),
+ * ButtonGroup, ToggleButtonGroup e SegmentedControl.
+ *
+ * A camada `ds-componentes` fica ANTES de `astryx-base`: os casos em que o
+ * próprio Astryx força uma forma (ex.: botão de scroll do Chat, sempre redondo;
+ * botões só com ícone, sempre quadrados) continuam a ganhar. Este ficheiro tem
+ * de ser o primeiro CSS importado: a primeira declaração de @layer fixa a ordem.
+ */
+@layer reset, ds-componentes, astryx-base, astryx-theme;
+
+[data-astryx-theme] {
+  /* Espaço lateral do texto nos controlos de ação: ×4/3 sobre o Astryx.
+     Button / SegmentedControl md·lg: 12px → 16px; SegmentedControl sm: 8px → ~10.7px. */
+  --ds-acao-padding-escala: calc(4 / 3);
+}
+
+@layer ds-componentes {
+  /* Cantos: ver raios.css. */
+
+  /* ── Espaço lateral ──
+     O Astryx não tem variável de padding para estes controlos: usam os degraus
+     --spacing-2/3 diretamente. Redefinimos esses degraus só no próprio controlo
+     e repomo-los nos filhos (ícones, badges), para não lhes mexer. */
+  .astryx-button,
+  .astryx-segmented-control-item {
+    --spacing-3: calc(0.75rem * var(--ds-acao-padding-escala));
+  }
+  .astryx-segmented-control-item {
+    --spacing-2: calc(0.5rem * var(--ds-acao-padding-escala));
+  }
+  .astryx-button *,
+  .astryx-segmented-control-item * {
+    --spacing-2: 0.5rem;
+    --spacing-3: 0.75rem;
+  }
+
+  /* ── Toolbar (mobile-first) ──
+     No Astryx, a Toolbar de dois lados (início + fim) nunca quebra linha: num
+     telemóvel os controlos ficam cortados. Regra do sistema: quando não cabe,
+     o lado do fim passa para a linha seguinte e mantém-se alinhado ao fim.
+     O 2.º filho é o slot do fim (depois vêm elementos invisíveis do Astryx).
+     Com só início ou com centro, esse filho cresce/é invisível e a margem
+     automática não tem efeito. */
+  .astryx-toolbar[aria-orientation='horizontal'] { flex-wrap: wrap; }
+  .astryx-toolbar[aria-orientation='horizontal'] > :nth-child(2) {
+    margin-inline-start: auto;
+  }
+}
+
+/* ── Contorno e volume dos botões ──
+   O volume dos elementos preenchidos (CheckboxInput marcada, ProgressBar…,
+   ver volume.css), 25% mais suave: reflexo claro em cima, tom mais escuro em baixo, em todas as
+   variantes (primary, secondary, destructive) e no ButtonGroup como um todo.
+   Contorno muito leve à volta. Carregado / ligado (toggle): afunda (calha).
+   Sem sombra por fora e sem gradiente.
+   Não se aplica a: ghost (botões planos, como em barras GNOME), desativados,
+   botões flutuantes (elevation low/med/high) nem a cada botão de um ButtonGroup.
+   Fora de @layer: tem de ganhar ao `box-shadow: none` que o Astryx aplica. */
+[data-astryx-theme] {
+  --ds-botao-contorno: 0 0 0 1px light-dark(rgb(0 0 6 / 8%), rgb(255 255 255 / 7%));
+  /* Volume dos botões: 25% mais suave que o dos outros elementos (volume.css). */
+  --ds-botao-volume:
+    inset 0 1px 0 rgb(255 255 255 / 21%),
+    inset 0 -1px 0 rgb(0 0 6 / 9%);
+  --ds-botao-afundado:
+    inset 0 1px 2px light-dark(rgb(0 0 6 / 12%), rgb(0 0 0 / 34%)),
+    inset 0 0 0 1px light-dark(rgb(0 0 6 / 4%), rgb(255 255 255 / 3%));
+}
+
+:is(.astryx-button[data-elevation='none']:not([data-variant='ghost'], :disabled, [aria-disabled='true'], .astryx-button-group *), .astryx-button-group) {
+  box-shadow: var(--ds-botao-contorno), var(--ds-botao-volume);
+}
+.astryx-button[data-elevation='none']:not([data-variant='ghost'], :disabled, [aria-disabled='true'], .astryx-button-group *):is(:active, [aria-pressed='true']),
+.astryx-button-group:has(.astryx-button:active) {
+  box-shadow: var(--ds-botao-contorno), var(--ds-botao-afundado);
+}
+/* O grupo não tem canto próprio no Astryx; o contorno precisa da forma dos botões. */
+.astryx-button-group { border-radius: var(--radius-element); }
+
+/* ── Reticências (MoreMenu e qualquer botão "mais") ──
+   O ícone Lucide tem pontos de ~2.7px num botão de 32px: quase invisíveis.
+   No Lucide a distância entre os pontos é fixa, por isso aumentamos o ícone
+   inteiro (1em → 1.5em, 16 → 24px): pontos de 4px (+50%) separados por 3px.
+   O botão mantém o tamanho. Vale para todo o sistema. */
+svg:is(.lucide-ellipsis, .lucide-ellipsis-vertical) {
+  width: 1.5em;
+  height: 1.5em;
+  flex-shrink: 0;
+}
+/* o elemento que envolve o ícone tem tamanho fixo no Astryx: deixa-o acompanhar */
+:has(> svg:is(.lucide-ellipsis, .lucide-ellipsis-vertical)) {
+  width: auto;
+  height: auto;
+}

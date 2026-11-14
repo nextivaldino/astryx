@@ -1,0 +1,211 @@
+/*
+ * BarraApp — estilo. Header bar do GNOME (libadwaita) + o nosso sistema:
+ * cores Adwaita (cores.css), cantos (raios.css), volume Aqua (volume.css).
+ * Botões da barra planos (ghost), 6px entre controlos, como na .toolbar do GNOME.
+ */
+
+[data-astryx-theme] {
+  --ds-barra-altura: 48px;
+  --ds-barra-fundo: var(--ds-adw-headerbar-bg);
+  /* sub-barra: um tom mais leve da barra principal */
+  --ds-subbarra-fundo: light-dark(#f6f6f8, #38383c);
+  --ds-barra-separador: var(--color-border);
+  --ds-barra-espaco: 6px;
+  /* Largura mínima de cada aba: as de nome curto ficam todas iguais (view
+     switcher do GNOME); as de nome longo crescem só o necessário. */
+  --ds-aba-largura: 128px;
+}
+
+.ds-barra {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--ds-barra-fundo);
+  border-block-end: 1px solid var(--ds-barra-separador);
+}
+
+/* ── Barra principal ── */
+.ds-barra-principal {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-barra-espaco);
+  min-block-size: var(--ds-barra-altura);
+  padding-inline: var(--ds-barra-espaco);
+}
+
+/* Menu da app: logótipo + nome */
+.ds-barra-app {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px 4px 4px;
+  border-radius: var(--radius-element);
+  cursor: pointer;
+  font-weight: 650;
+  color: var(--color-text-primary);
+}
+.ds-barra-app:hover { background: var(--color-overlay-hover); }
+.ds-barra-app[aria-expanded='true'] { background: var(--color-overlay-pressed); }
+.ds-barra-app:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+/* Ícone da app: só o ícone, na cor de destaque (sem caixa à volta) */
+.ds-barra-logo {
+  display: inline-grid;
+  place-items: center;
+  color: var(--color-text-accent);
+  flex-shrink: 0;
+}
+
+.ds-barra-titulo {
+  margin: 0;
+  padding-inline-start: 10px;
+  border-inline-start: 1px solid var(--ds-barra-separador);
+  font-size: var(--font-size-base);
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Abas ao centro, a ocupar o espaço livre e a altura toda da barra:
+   o indicador da aba ativa fica pousado na borda de baixo da barra. */
+.ds-barra-abas {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  display: flex;
+  justify-content: center;
+  align-self: stretch;
+}
+.ds-barra-abas div { block-size: 100%; }
+/* Todas as abas com a largura da maior (nunca abaixo de --ds-aba-largura) */
+.ds-barra-abas div:has(> .astryx-tab) {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(var(--ds-aba-largura), 1fr);
+}
+.ds-barra-abas .astryx-tab {
+  block-size: 100%;
+  min-inline-size: var(--ds-aba-largura);
+  justify-content: center;
+}
+.ds-barra-abas .astryx-tab-indicator {
+  bottom: 0;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+}
+
+.ds-barra-fim {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-barra-espaco);
+  margin-inline-start: auto;
+}
+.ds-barra-pesquisa { inline-size: 220px; }
+.ds-barra-pesquisa-botao { display: none; }
+
+/* Disparador da sub-barra: roda quando aberta */
+.ds-barra-expandir svg { transition: rotate var(--duration-fast, 150ms) var(--ease-standard, ease-out); }
+.ds-barra[data-sub-aberta] .ds-barra-expandir svg { rotate: 180deg; }
+
+/* ── Linha de pesquisa (ecrãs estreitos) ── */
+.ds-barra-linha-pesquisa {
+  padding: var(--ds-barra-espaco) 12px;
+  border-block-start: 1px solid var(--ds-barra-separador);
+}
+
+/* ── Sub-barra: abre/fecha só com grid (leve, sem medir alturas) ── */
+.ds-subbarra {
+  display: grid;
+  grid-template-rows: 0fr;
+  background: var(--ds-subbarra-fundo);
+  transition: grid-template-rows var(--duration-fast, 150ms) var(--ease-standard, ease-out);
+}
+.ds-barra[data-sub-aberta] .ds-subbarra {
+  grid-template-rows: 1fr;
+  border-block-start: 1px solid var(--ds-barra-separador);
+}
+.ds-subbarra-conteudo {
+  overflow: hidden;
+  min-block-size: 0;
+}
+.ds-subbarra-conteudo > * {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-barra-espaco) 8px;
+  padding: 8px 12px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-subbarra, .ds-barra-expandir svg { transition: none; }
+}
+
+/* ── Menu da app: cabeçalho ── */
+.ds-barra-menu-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px 6px;
+}
+.ds-barra-menu-cabecalho > span:last-child { display: grid; line-height: 1.25; }
+.ds-barra-menu-cabecalho small { color: var(--color-text-secondary); font-size: var(--font-size-xs); }
+
+/* ── Barra do fundo (só telemóvel) ── */
+.ds-barra-fundo { display: none; }
+
+/* ── Tablet: < 1024px ── */
+@media (width < 1024px) {
+  /* Abas estreitas: ícone por cima do nome, letra mais pequena (GNOME) */
+  [data-astryx-theme] { --ds-aba-largura: 84px; }
+  .ds-barra-abas .astryx-tab {
+    flex-direction: column;
+    gap: 2px;
+    padding-inline: 8px;
+    font-size: var(--font-size-2xs);
+  }
+  .ds-barra-app-nome { display: none; }
+  .ds-barra-pesquisa { display: none; }
+  .ds-barra-pesquisa-botao { display: inline-flex; }
+}
+
+/* ── Telemóvel: < 640px ── */
+@media (width < 640px) {
+  .ds-barra-abas { display: none; }
+  .ds-barra-titulo {
+    flex: 1 1 auto;
+    text-align: center;
+    border: 0;
+    padding: 0;
+  }
+  .ds-barra-fundo {
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: 10;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    padding: 4px 6px calc(4px + env(safe-area-inset-bottom, 0px));
+    background: var(--ds-barra-fundo);
+    border-block-start: 1px solid var(--ds-barra-separador);
+  }
+  .ds-barra-fundo-item {
+    all: unset;
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    padding: 6px 4px;
+    border-radius: var(--radius-element);
+    font-size: var(--font-size-2xs);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+  .ds-barra-fundo-item[aria-current='page'] {
+    color: var(--color-text-primary);
+    background: var(--color-overlay-pressed);
+  }
+  .ds-barra-fundo-item:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+  /* espaço para a barra do fundo não tapar o conteúdo */
+  body { padding-block-end: 64px; }
+}

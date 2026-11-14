@@ -1,0 +1,51 @@
+/*
+ * CartaoInfo (next-mobile) — pastéis suaves da paleta KARGA.
+ * Claro: fundo tom-100, texto tom-800. Escuro: fundo tingido (tom a 16% sobre
+ * a superfície), texto tom-200. Contraste do texto ≥ 4.5:1 nos dois modos.
+ */
+
+.nm-grelha-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 156px), 1fr));
+  grid-auto-flow: row dense; /* preenche buracos deixados pelos cartões largos */
+  gap: 12px;
+}
+
+.nm-info {
+  --info-fundo: #f1f1f3;
+  --info-forte: #3d3d40;
+  --info-hex: #8e8e93; /* tom base, para o modo escuro */
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-inline-size: 0;
+  padding: 16px;
+  box-sizing: border-box;
+  border-radius: var(--radius-container);
+  background: light-dark(var(--info-fundo), color-mix(in srgb, var(--info-hex) 16%, var(--color-background-surface)));
+  color: light-dark(var(--info-forte), color-mix(in srgb, var(--info-hex) 35%, white));
+  box-shadow: inset 0 0 0 1px light-dark(color-mix(in srgb, var(--info-forte) 8%, transparent), color-mix(in srgb, var(--info-hex) 22%, transparent));
+}
+.nm-info[data-largo] { grid-column: span 2; }
+@media (width < 360px) { .nm-info[data-largo] { grid-column: auto; } }
+
+.nm-info[data-tom='coral'] { --info-fundo: #fee4da; --info-forte: #8a2d1d; --info-hex: #f2674f; }
+.nm-info[data-tom='ceu'] { --info-fundo: #e4ecff; --info-forte: #263a73; --info-hex: #5f7fdc; }
+.nm-info[data-tom='salvia'] { --info-fundo: #e5efe7; --info-forte: #284b34; --info-hex: #5a966c; }
+.nm-info[data-tom='lavanda'] { --info-fundo: #eeeafa; --info-forte: #40346d; --info-hex: #8470cf; }
+.nm-info[data-tom='ambar'] { --info-fundo: #fbefd9; --info-forte: #62400b; --info-hex: #e0a548; }
+.nm-info[data-tom='mar'] { --info-fundo: #def1f0; --info-forte: #184745; --info-hex: #36918c; }
+.nm-info[data-tom='rosa'] { --info-fundo: #fbe4ef; --info-forte: #7a1f4c; --info-hex: #d6528f; }
+
+.nm-info-topo { display: flex; align-items: center; gap: 8px; }
+.nm-info-icone { display: grid; place-items: center; font-size: 18px; opacity: 0.9; }
+.nm-info-titulo { margin: 0; font-size: var(--font-size-sm); font-weight: 650; }
+.nm-info-valor {
+  margin: 4px 0 0;
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.nm-info-descricao { margin: 0; font-size: var(--font-size-xs); line-height: 1.4; opacity: 0.85; }
+.nm-info-acao { margin-block-start: auto; padding-block-start: 8px; }

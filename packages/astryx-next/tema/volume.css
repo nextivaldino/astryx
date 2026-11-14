@@ -1,0 +1,60 @@
+/*
+ * Volume — pequeno efeito 3D ao estilo das interfaces Aqua (Apple antiga),
+ * sem gradientes: só sombras interiores e exteriores de 1–2px.
+ *
+ * Três papéis, aplicados no sistema inteiro:
+ *   CALHA     — onde algo corre ou se preenche: parece cavada (sombra interior em cima).
+ *   PREENCHIDO — a parte cheia/ligada: reflexo claro em cima, tom mais escuro em baixo.
+ *   PUXADOR   — o que se agarra ou o que está escolhido: em relevo (sombra por baixo).
+ *
+ *   ProgressBar    calha = track          preenchido = fill
+ *   Slider         calha = track          preenchido = parte cheia   puxador = thumb
+ *   Switch         calha = fundo          puxador = bolinha
+ *   SegmentedControl calha = barra        puxador = opção escolhida
+ *   Stepper        calha = barra do passo preenchido = passo concluído
+ *   Checkbox       calha = vazia          preenchido = marcada
+ *   Radio          calha = vazio          preenchido = marcado
+ *
+ * Fora de @layer. Em modo de cores forçadas (alto contraste do sistema) as
+ * sombras são ignoradas pelo browser — o contraste continua a vir das cores.
+ */
+
+[data-astryx-theme] {
+  --ds-vol-calha:
+    inset 0 1px 2px light-dark(rgb(0 0 6 / 16%), rgb(0 0 0 / 45%)),
+    inset 0 0 0 1px light-dark(rgb(0 0 6 / 5%), rgb(255 255 255 / 4%));
+  --ds-vol-preenchido:
+    inset 0 1px 0 rgb(255 255 255 / 28%),
+    inset 0 -1px 0 rgb(0 0 6 / 12%);
+  --ds-vol-puxador:
+    0 1px 2px light-dark(rgb(0 0 6 / 22%), rgb(0 0 0 / 55%)),
+    0 0 0 0.5px light-dark(rgb(0 0 6 / 12%), rgb(0 0 0 / 40%)),
+    inset 0 1px 0 rgb(255 255 255 / 35%);
+}
+
+/* ── Calhas ── */
+.astryx-progress-bar-track,
+.astryx-slider-track,
+.astryx-switch,
+.astryx-segmented-control,
+.astryx-step-bar,
+.astryx-checkbox-indicator:not([data-checked]),
+.astryx-radio-indicator:not([data-checked]) {
+  box-shadow: var(--ds-vol-calha);
+}
+
+/* ── Preenchidos ── */
+.astryx-progress-bar-fill,
+.astryx-slider-track + div > div > div, /* parte cheia do Slider (sem classe no Astryx) */
+.astryx-step[data-progress='completed'] .astryx-step-bar,
+.astryx-checkbox-indicator[data-checked],
+.astryx-radio-indicator[data-checked] {
+  box-shadow: var(--ds-vol-preenchido);
+}
+
+/* ── Puxadores ── */
+.astryx-slider-thumb,
+.astryx-switch-thumb,
+.astryx-segmented-control-item[data-selected] {
+  box-shadow: var(--ds-vol-puxador);
+}

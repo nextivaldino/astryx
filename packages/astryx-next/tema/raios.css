@@ -1,0 +1,27 @@
+/*
+ * Arredondados.
+ *
+ * 1. Elementos (botões, campos, separadores, itens de navegação, tokens…):
+ *    todos com o canto dos botões → --ds-raio-base (7.5px, −25% do tema base).
+ *    Contentores (Card, Dialog, menus, Popover…) mantêm o tema base (12px).
+ *
+ * 2. O que fica dentro de um elemento (tokens num campo, caixa da checkbox,
+ *    teclas): base − 4px, a distância que o Astryx deixa entre eles → 3.5px.
+ *    Mantém os tokens concêntricos com o campo.
+ *
+ * 3. SegmentedControl: a barra é um elemento (7.5px) e os botões de dentro
+ *    descontam a distância (Astryx) → 3.5px, concêntricos com a barra.
+ *
+ * Onde o Astryx força uma forma no próprio elemento (redondo, quadrado),
+ * essa forma continua a ganhar.
+ */
+
+[data-astryx-theme] {
+  /* Tema base: --radius-element = 0.625rem (10px). −25% → 7.5px. */
+  --ds-raio-base: calc(0.625rem * 0.75);
+  --ds-raio-interior: max(2px, calc(var(--ds-raio-base) - var(--spacing-1)));
+
+  /* Tokens globais do Astryx (fora de @layer para ganhar ao tema base). */
+  --radius-element: var(--ds-raio-base);
+  --radius-inner: var(--ds-raio-interior);
+}
