@@ -27,6 +27,8 @@ está em [`REFERENCIA.md`](REFERENCIA.md).
    - **next-mobile** (telemóvel e tablet): `Dock`, `CantoUtilizador`, `CartaoInfo`/`GrelhaInfo`, `Definicoes` e o
      layout `.nm-colunas`.
    - **next-desktop** (web e Electron): `BarraApp`, `BarraEstado`, `JanelaDefinicoes`.
+     - A `BarraApp` vira barra de tarefas sozinha; não cries outra navegação inferior.
+     - Passa `onDefinicoes` à `BarraApp` para ativar o botão ⚙.
    - Para começar uma app nova, usa o assistente `criar-astryx-next`: ele gera o modelo certo.
 5. **Navegação e movimento.**
    - A `Dock` e a `BarraApp` já animam a troca de página.

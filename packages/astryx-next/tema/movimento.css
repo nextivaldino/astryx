@@ -45,12 +45,12 @@
 .nm-dock { view-transition-name: nm-dock; }
 .nm-bolha { view-transition-name: nm-bolha; }
 .ds-barra { view-transition-name: ds-barra; }
-.ds-barra-fundo { view-transition-name: ds-barra-fundo; }
+.ds-tarefas[data-posicao='baixo'] { view-transition-name: ds-tarefas; }
 .ds-estado { view-transition-name: ds-estado; }
 /* As barras não cruzam: mostram logo o estado novo, que anima por si (a pílula da dock desliza) */
-:is(::view-transition-old(nm-dock), ::view-transition-old(nm-bolha), ::view-transition-old(ds-barra), ::view-transition-old(ds-barra-fundo), ::view-transition-old(ds-estado)) { display: none; }
-:is(::view-transition-new(nm-dock), ::view-transition-new(nm-bolha), ::view-transition-new(ds-barra), ::view-transition-new(ds-barra-fundo), ::view-transition-new(ds-estado)) { animation: none; }
-:is(::view-transition-group(nm-dock), ::view-transition-group(nm-bolha), ::view-transition-group(ds-barra), ::view-transition-group(ds-barra-fundo), ::view-transition-group(ds-estado)) { animation-duration: 0s; }
+:is(::view-transition-old(nm-dock), ::view-transition-old(nm-bolha), ::view-transition-old(ds-barra), ::view-transition-old(ds-tarefas), ::view-transition-old(ds-estado)) { display: none; }
+:is(::view-transition-new(nm-dock), ::view-transition-new(nm-bolha), ::view-transition-new(ds-barra), ::view-transition-new(ds-tarefas), ::view-transition-new(ds-estado)) { animation: none; }
+:is(::view-transition-group(nm-dock), ::view-transition-group(nm-bolha), ::view-transition-group(ds-barra), ::view-transition-group(ds-tarefas), ::view-transition-group(ds-estado)) { animation-duration: 0s; }
 
 ::view-transition-old(root) { animation: mov-pagina-sai var(--mov-fechar) var(--mov-suave) both; }
 ::view-transition-new(root) { animation: mov-pagina-entra var(--mov-abrir) var(--mov-suave) both; }

@@ -1,6 +1,6 @@
 {
   "name": "astryx-next",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "private": true,
   "type": "module",
   "description": "Astryx-NEXT — design system para apps desktop (web/Electron) e mobile, sobre o Astryx da Meta: tema comum, next-desktop, next-mobile, formulário inteligente e assistente para criar apps.",

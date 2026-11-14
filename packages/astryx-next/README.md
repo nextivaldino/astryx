@@ -6,7 +6,7 @@ variantes da mesma família:
 
 | Estilo | Para | Peças principais |
 |---|---|---|
-| **next-desktop** | web e Electron | `BarraApp` (menu da app, abas, pesquisa, sub-barra), `BarraEstado`, `JanelaDefinicoes` (janela flutuante) |
+| **next-desktop** | web e Electron | `BarraApp` (menu da app, abas, pesquisa, sub-barra; vira barra de tarefas ao estilo Windows 7), `BarraEstado`, `JanelaDefinicoes` (janela flutuante) |
 | **next-mobile** | telemóvel e tablet | `Dock` (ilha de avisos, painéis), `CantoUtilizador`, `CartaoInfo`/`GrelhaInfo`, `Definicoes` |
 
 Comum às duas:
@@ -28,7 +28,7 @@ Comum às duas:
 Precisas do **Node 18+**. Não é preciso clonar nada:
 
 ```sh
-npx --yes --package=https://github.com/nextivaldino/astryx/releases/download/astryx-next-v1.0.0-beta.1/astryx-next-1.0.0-beta.1.tgz criar-astryx-next
+npx --yes --package=https://github.com/nextivaldino/astryx/releases/download/astryx-next-v1.0.0-beta.2/astryx-next-1.0.0-beta.2.tgz criar-astryx-next
 ```
 
 O assistente faz cinco perguntas:
@@ -73,7 +73,7 @@ O `vite.config.js` dos modelos trata dos dois: se existir a pasta `astryx-next/`
 
 ```sh
 npm run visual:atualizar                   # a versão mais recente publicada
-npm run visual:atualizar -- 1.0.0-beta.1   # uma versão específica (também serve para voltar atrás)
+npm run visual:atualizar -- 1.0.0-beta.2   # uma versão específica (também serve para voltar atrás)
 ```
 
 No modo copiar, o comando:
@@ -103,6 +103,11 @@ Sem ligação, ou com o fork em baixo, **nada é alterado**. Para desfazer: apag
   - lembra a posição.
 - As duas usam a mesma `useAparencia()`: uma escolha nova no sistema aparece nas duas.
 
+**Barra de tarefas (desktop):**
+- Quando a janela fica estreita, a `BarraApp` passa a barra de tarefas ao estilo Windows 7: Iniciar, páginas em
+  ícones, tabuleiro com pesquisa, avisos, definições e relógio.
+- Em Definições → Barra da app escolhe-se se aparece só ao reduzir ou sempre, e se fica em baixo ou em cima.
+
 No **Electron**, a barra de título nativa segue o modo da app com duas linhas no processo principal (ver
 [`astryx-next/electron`](REFERENCIA.md#astryx-nextelectron)).
 
@@ -113,7 +118,7 @@ No **Electron**, a barra de título nativa segue o modo da app com duas linhas n
 | `astryx-next/tema` | o tema (só CSS; importar primeiro) |
 | `astryx-next/comum` | `useAparencia`, `aplicarAparenciaGuardada`, `MODO_TEMA`, `transicao`, `useOnline`, `OPCOES`… |
 | `astryx-next/mobile` | `Dock`, `DockProvider`, `useDock`, `CantoUtilizador`, `CartaoInfo`, `GrelhaInfo`, `Definicoes`, `GrupoDef`, `LinhaDef`, `OpcaoDock`, ícones |
-| `astryx-next/desktop` | `BarraApp`, `BarraEstado`, `Estado`, `JanelaDefinicoes` |
+| `astryx-next/desktop` | `BarraApp`, `BarraEstado`, `Estado`, `JanelaDefinicoes`, `BarraTarefas` |
 | `astryx-next/formulario` | `Formulario`, `Seccao`, `Campo` |
 | `astryx-next/electron` | `ligarAstryxNext`, `PRELOAD` |
 

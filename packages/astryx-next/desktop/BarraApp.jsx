@@ -9,13 +9,35 @@
 // Adaptativa (barra-app.css):
 //   ≥1024px  tudo visível
 //   <1024px  nome da app escondido (fica o ícone); pesquisa vira botão 🔍
-//   <640px   título ao centro; abas passam para uma barra no fundo do ecrã
+//   <768px   (ou sempre, nas Definições) vira BARRA DE TAREFAS ao estilo Windows 7:
+//            Iniciar + páginas + tabuleiro, em baixo ou em cima (BarraTarefas.jsx)
 //
 // Só compõe componentes do Astryx; o estilo vem de barra-app.css + tema.
 import { useEffect, useId, useState } from 'react';
 import { Button, DropdownMenu, Icon, Tab, TabList, TextInput } from '@astryxdesign/core';
 import { sentidoEntre, transicao } from '../comum/index.js';
+import BarraTarefas from './BarraTarefas.jsx';
 import './barra-app.css';
+
+/** Modo da barra: lê a escolha das Definições (<html data-barra-*>) e a largura da janela. */
+function useModoBarra() {
+  const raiz = document.documentElement;
+  const ler = () => ({
+    sempre: raiz.dataset.barraTarefas === 'sempre',
+    posicao: raiz.dataset.barraPosicao === 'cima' ? 'cima' : 'baixo',
+    estreita: matchMedia('(width < 768px)').matches,
+  });
+  const [modo, setModo] = useState(ler);
+  useEffect(() => {
+    const atualizar = () => setModo((m) => { const n = ler(); return n.sempre === m.sempre && n.posicao === m.posicao && n.estreita === m.estreita ? m : n; });
+    const mo = new MutationObserver(atualizar);
+    mo.observe(raiz, { attributes: true, attributeFilter: ['data-barra-tarefas', 'data-barra-posicao'] });
+    const mq = matchMedia('(width < 768px)');
+    mq.addEventListener('change', atualizar);
+    return () => { mo.disconnect(); mq.removeEventListener('change', atualizar); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  return { tarefas: modo.sempre || modo.estreita, posicao: modo.posicao };
+}
 
 const lerAberta = (chave) => { try { return localStorage.getItem(chave) === '1'; } catch { return false; } };
 const gravarAberta = (chave, v) => { try { localStorage.setItem(chave, v ? '1' : '0'); } catch {} };
@@ -28,9 +50,10 @@ const gravarAberta = (chave, v) => { try { localStorage.setItem(chave, v ? '1' :
  * @param pesquisa   { valor, onChange, placeholder } (opcional)
  * @param fim        botões extra antes do disparador (ex.: menu principal)
  * @param subBarra   conteúdo da sub-barra; sem ele não há disparador
+ * @param onDefinicoes  abre as definições (botão ⚙ no tabuleiro da barra de tarefas)
  */
 export default function BarraApp({
-  app, menuApp, titulo, abas = [], abaAtiva, onAbaChange, pesquisa, fim, subBarra,
+  app, menuApp, titulo, abas = [], abaAtiva, onAbaChange, pesquisa, fim, subBarra, onDefinicoes,
 }) {
   const idSub = useId();
   const chave = `ds-barra-sub:${app.nome}`;
@@ -40,6 +63,13 @@ export default function BarraApp({
   useEffect(() => gravarAberta(chave, aberta), [chave, aberta]);
   // 1.ª aba = início (o padrão do fundo pode aparecer só aqui)
   const noInicio = abaAtiva === abas[0]?.valor;
+  const { tarefas, posicao } = useModoBarra();
+  // Avisa o resto da página (barra de estado, margens) de onde está a barra de tarefas
+  useEffect(() => {
+    if (!tarefas) return;
+    document.documentElement.dataset.tarefas = posicao;
+    return () => { delete document.documentElement.dataset.tarefas; };
+  }, [tarefas, posicao]);
   useEffect(() => {
     document.documentElement.toggleAttribute('data-no-inicio', noInicio);
     return () => document.documentElement.removeAttribute('data-no-inicio');
@@ -53,10 +83,32 @@ export default function BarraApp({
     </TabList>
   );
 
+  const barraTarefas = (
+    <BarraTarefas
+      app={app}
+      menuApp={menuApp}
+      abas={abas}
+      abaAtiva={abaAtiva}
+      irPara={irPara}
+      pesquisa={pesquisa}
+      fim={fim}
+      onDefinicoes={onDefinicoes}
+      posicao={posicao}
+      sub={subBarra && { aberta, id: idSub, alternar: () => setAberta((v) => !v) }}
+    />
+  );
+
   return (
     <>
-      <header className="ds-barra" data-sub-aberta={aberta || undefined}>
-        <div className="ds-barra-principal">
+      <header className="ds-barra" data-sub-aberta={aberta || undefined} data-tarefas={tarefas ? posicao : undefined}>
+        {tarefas && posicao === 'cima' && barraTarefas}
+        {tarefas && posicao === 'baixo' && (
+          <div className="ds-barra-principal" data-min="">
+            <span className="ds-barra-logo" aria-hidden="true"><Icon icon={app.icone} /></span>
+            {titulo && <h1 className="ds-barra-titulo">{titulo}</h1>}
+          </div>
+        )}
+        {!tarefas && <div className="ds-barra-principal">
           {/* Menu da app: logótipo + nome, como o menu da app no Mac */}
           <DropdownMenu
             placement="below"
@@ -127,10 +179,10 @@ export default function BarraApp({
               />
             )}
           </div>
-        </div>
+        </div>}
 
         {/* Pesquisa em ecrãs estreitos: linha própria, como a search bar do GNOME */}
-        {pesquisa && aPesquisar && (
+        {!tarefas && pesquisa && aPesquisar && (
           <div className="ds-barra-linha-pesquisa">
             <TextInput
               type="search"
@@ -153,23 +205,7 @@ export default function BarraApp({
         )}
       </header>
 
-      {/* Telemóvel: as abas descem para uma barra no fundo (view switcher bar do GNOME) */}
-      {abas.length > 0 && (
-        <nav className="ds-barra-fundo" aria-label="Páginas">
-          {abas.map((a) => (
-            <button
-              key={a.valor}
-              type="button"
-              className="ds-barra-fundo-item"
-              aria-current={a.valor === abaAtiva ? 'page' : undefined}
-              onClick={() => irPara(a.valor)}
-            >
-              {a.icone && <Icon icon={a.icone} />}
-              <span>{a.rotulo}</span>
-            </button>
-          ))}
-        </nav>
-      )}
+      {tarefas && posicao === 'baixo' && barraTarefas}
     </>
   );
 }

@@ -33,6 +33,7 @@ const svg = (d) => (props) => (
 );
 const GrelhaIcone = svg(<><rect x="3.5" y="3.5" width="17" height="17" rx="3" /><path d="M3.5 9.5h17M3.5 14.5h17M9.5 3.5v17M14.5 3.5v17" /></>);
 const AjustesIcone = svg(<><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></>);
+const BarraIcone = svg(<><rect x="3" y="4" width="18" height="16" rx="3" /><path d="M3 15.5h18" /><circle cx="6.5" cy="17.8" r="0.9" fill="currentColor" /></>);
 const ProcurarIcone = svg(<><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4.2-4.2" /></>);
 
 const normalizar = (t) => t.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
@@ -168,6 +169,24 @@ function Janela({ onFechar, aparencia, mudar, repor, seccoesApp = [], app, secca
       conteudo: bloco('padrao grelha planta pontos linhas diagonal intensidade avisos notificacao', <PadraoFundo aparencia={aparencia} mudar={mudar} />),
     },
     {
+      id: 'barra', titulo: 'Barra da app', icone: <BarraIcone />,
+      conteudo: (
+        <>
+          {!q && <MiniBarra posicao={aparencia.barraPosicao} />}
+          {bloco('barra tarefas windows iniciar sempre reduzir estreita', (
+            <GrupoDef titulo="Barra de tarefas" nota="Com Iniciar, as páginas em ícones, pesquisa, avisos e relógio. «Ao reduzir»: quando a janela fica estreita; «Sempre»: em qualquer tamanho.">
+              <div className="nm-def-controlo">{seg('barraTarefas', 'Quando usar a barra de tarefas')}</div>
+            </GrupoDef>
+          ))}
+          {bloco('posicao barra cima baixo topo fundo', (
+            <GrupoDef titulo="Posição da barra de tarefas">
+              <div className="nm-def-controlo">{seg('barraPosicao', 'Posição da barra de tarefas')}</div>
+            </GrupoDef>
+          ))}
+        </>
+      ),
+    },
+    {
       id: 'interface', titulo: 'Interface', icone: <AjustesIcone />,
       conteudo: (
         <>
@@ -260,6 +279,16 @@ function Janela({ onFechar, aparencia, mudar, repor, seccoesApp = [], app, secca
         </div>
       </div>
     </section>
+  );
+}
+
+/** Miniatura da barra de tarefas, em cima ou em baixo. */
+function MiniBarra({ posicao }) {
+  return (
+    <div className="ds-mini ds-mini-tarefas" data-posicao={posicao} aria-hidden="true">
+      <div className="ds-mini-tarefas-barra"><b /><em /><i /><i /><i /><span /><u /></div>
+      <div className="ds-mini-area"><span /><span /><span /></div>
+    </div>
   );
 }
 

@@ -62,6 +62,15 @@ export const OPCOES = {
     { valor: '110', rotulo: '110%' },
     { valor: '125', rotulo: '125%' },
   ],
+  // Barra de tarefas do desktop (BarraApp): estilo Windows 7, com Iniciar, páginas e tabuleiro
+  barraTarefas: [
+    { valor: 'auto', rotulo: 'Ao reduzir' },
+    { valor: 'sempre', rotulo: 'Sempre' },
+  ],
+  barraPosicao: [
+    { valor: 'baixo', rotulo: 'Em baixo' },
+    { valor: 'cima', rotulo: 'Em cima' },
+  ],
   formaBotoes: [
     { valor: 'arredondado', rotulo: 'Arredondados' },
     { valor: 'pilula', rotulo: 'Pílula' },
@@ -93,7 +102,7 @@ export const OPCOES = {
 export const PADRAO = {
   estilo: 'adwaita', modo: 'sistema', fundo: 'padrao', destaque: 'azul',
   textura: 'nenhuma', texturaIntensidade: 'suave', texturaOnde: 'inicio', texturaAvisos: true,
-  escala: '100',
+  escala: '100', barraTarefas: 'auto', barraPosicao: 'baixo',
   densidade: 'normal', formaBotoes: 'arredondado', ladoCriar: 'direita', nomesDock: 'frequentes', reduzirEfeitos: false,
   // Dock (Definições → Dock)
   dockTema: 'igual', dockMaterial: 'vidro', dockEncolher: true, dockEsconder: true,
@@ -148,6 +157,8 @@ export function aplicarAparencia(guardada) {
   d.destaque = a.destaque;
   d.densidade = a.densidade;
   d.escala = a.escala;
+  d.barraTarefas = a.barraTarefas;
+  d.barraPosicao = a.barraPosicao;
   d.textura = a.textura;
   d.texturaIntensidade = a.texturaIntensidade;
   d.texturaOnde = a.texturaOnde;

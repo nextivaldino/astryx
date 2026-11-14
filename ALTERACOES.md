@@ -28,6 +28,19 @@ Inspiração: **GNOME HIG / libadwaita** (paleta Adwaita, barras, listas em caix
 
 ---
 
+## 1.0.0-beta.2 — 14/11/2026 · barra de tarefas (desktop) e polimento
+
+| O que mudou | Porquê | Tipo | Impacto | Quebra? |
+|---|---|---|---|---|
+| **Barra de tarefas** (`BarraTarefas`, usada pela `BarraApp`), inspirada no Windows 7, na linguagem do sistema: Iniciar (orbe na cor de destaque, abre o menu da app com as páginas no topo), páginas em ícones com realce de vidro e traço de luz na atual (com nome quando a barra é larga), tabuleiro com pesquisa na barra, avisos (contagem e lista), ⚙ definições, opções da página, botões da app, ligação e relógio, e o traço final que leva ao início | Quando a barra da app é reduzida, em vez de uma simples fila de abas no fundo há uma barra de verdade, preparada para desktop | novo componente | desktop | não |
+| Quando aparece: **ao reduzir** (janela < 768px) ou **sempre**; posição **em baixo** ou **em cima** — Definições → Barra da app, com miniatura | Escolha de cada pessoa | tema | desktop | não |
+| Vidro com fio de luz (Aero); sólida com "Reduzir efeitos"; fica parada durante as transições de página; janela muito estreita: botões mais justos e a pesquisa ocupa o lugar das páginas | Bonita e leve em qualquer tamanho | tema | desktop | não |
+| Barra de estado: sobe para cima da barra de tarefas quando esta está em baixo; em janelas muito estreitas só aparece com avisos | Nada tapado, nada repetido | tema | desktop | não |
+| `BarraApp`: nova propriedade `onDefinicoes`; a antiga barra de abas no fundo (telemóvel) deu lugar à barra de tarefas | Uma só navegação adaptativa | código-fonte | desktop | não |
+| Modelo desktop: a barra de estado mostra o tema efetivo ("Tema do sistema", "Tema escuro"…) em vez de "Tema personalizado" | Mais claro para quem usa | código-fonte | desktop | não |
+
+---
+
 ## 1.0.0-beta.1 — 14/11/2026 · primeira beta pública
 
 Primeira versão para outras pessoas (e assistentes de IA) usarem sem ajuda. Junta tudo das betas 0.1.0

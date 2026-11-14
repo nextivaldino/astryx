@@ -34,17 +34,17 @@
   gap: 6px;
   white-space: nowrap;
 }
-/* espaço para a barra não tapar o conteúdo (no telemóvel quem manda é a barra das páginas) */
+/* espaço para a barra não tapar o conteúdo (com a barra de tarefas em baixo, ver barra-app.css) */
 @media (width >= 640px) {
   body { padding-block-end: var(--ds-estado-altura); }
 }
 
-/* Telemóvel: o fundo é da barra das páginas; só os avisos aparecem, por cima dela */
+/* Janela muito estreita: o relógio e a ligação já estão no tabuleiro da barra de tarefas;
+   a barra de estado só aparece com avisos (por cima da barra de tarefas, se estiver em baixo) */
 @media (width < 640px) {
   .ds-estado { display: none; }
   .ds-estado:has([data-aviso]) {
     display: flex;
-    inset-block-end: 64px;
     justify-content: center;
   }
   .ds-estado:has([data-aviso]) .ds-estado-item:not([data-aviso]) { display: none; }

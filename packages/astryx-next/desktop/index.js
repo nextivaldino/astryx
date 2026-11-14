@@ -2,3 +2,4 @@
 export { default as BarraApp } from './BarraApp.jsx';
 export { default as BarraEstado, Estado, useOnline } from './BarraEstado.jsx';
 export { default as JanelaDefinicoes } from './JanelaDefinicoes.jsx';
+export { default as BarraTarefas } from './BarraTarefas.jsx';

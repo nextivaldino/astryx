@@ -74,6 +74,8 @@ O `vite.config.js` dos modelos já trata da resolução do pacote (pasta `astryx
 | `texturaOnde` | `inicio` (só na 1.ª página) · `todas` |
 | `texturaAvisos` | `true`/`false`: o fundo ganha a cor do aviso ativo |
 | `escala` | `'90'` · `'100'` · `'110'` · `'125'` (tamanho da interface; desktop) |
+| `barraTarefas` | `auto` (barra de tarefas quando a janela fica estreita, < 768px) · `sempre` (desktop) |
+| `barraPosicao` | `baixo` · `cima` (posição da barra de tarefas; desktop) |
 | `densidade` | `compacta` · `normal` · `confortavel` |
 | `formaBotoes` | `arredondado` · `pilula` |
 | `reduzirEfeitos` | `true`/`false`: sem vidro nem animações |
@@ -160,9 +162,23 @@ usados no sistema: `calendar`, `viewColumns`, `checkDouble`, `clock`, `info`, `w
 
 ### `BarraApp`
 
-A barra superior da app, ao estilo das header bars do GNOME, com sub-barra expansível. É adaptativa:
-- em ecrãs estreitos esconde o nome da app;
-- num telemóvel, as abas descem para uma barra no fundo.
+A barra superior da app, ao estilo das header bars do GNOME, com sub-barra expansível. Em ecrãs médios esconde o
+nome da app.
+
+Quando a janela fica estreita (< 768px), ou sempre se assim se escolher nas definições, passa a
+**barra de tarefas** (inspirada no Windows 7):
+- **Iniciar:** a orbe com o ícone da app abre o menu da app, com as páginas no topo.
+- **Páginas:** em ícones, com realce de vidro e um traço de luz na atual. Mostram o nome quando há espaço.
+- **Tabuleiro:**
+  - pesquisa, que abre na própria barra;
+  - avisos, com contagem e lista;
+  - ⚙ definições;
+  - opções da página;
+  - os botões `fim` da app;
+  - ligação e relógio.
+- **Traço final:** leva à página inicial.
+
+A barra fica em baixo ou em cima (`barraPosicao`). Em baixo, a barra de estado sobe para cima dela.
 
 | Propriedade | |
 |---|---|
@@ -173,6 +189,7 @@ A barra superior da app, ao estilo das header bars do GNOME, com sub-barra expan
 | `pesquisa` | `{ valor, onChange, placeholder }` (opcional). |
 | `fim` | Botões extra à direita. |
 | `subBarra` | Conteúdo da sub-barra (ações da página). Sem ele, não há botão para a abrir. |
+| `onDefinicoes` | Abre as definições (botão ⚙ da barra de tarefas). Normalmente abre a `JanelaDefinicoes`. |
 
 ### `BarraEstado` e `Estado`
 
@@ -276,5 +293,6 @@ O sistema escreve-os; a app pode lê-los no CSS, mas não os deve escrever, exce
 | `data-estilo`, `data-fundo`, `data-destaque`, `data-densidade`, `data-escala`, `data-forma-botoes`, `data-textura…`, `data-reduzir-efeitos` | A aparência escolhida. |
 | `data-theme` | `light`/`dark` quando o modo não é o do sistema. |
 | `data-no-inicio` | Posto pela `Dock`/`BarraApp` na 1.ª página. Numa app sem elas, marca-o à mão. |
+| `data-tarefas` | `baixo`/`cima` enquanto a `BarraApp` está em modo barra de tarefas. |
 | `data-fundo-aviso` | Tipo do aviso ativo (pinta o fundo). |
 | `data-transicao` | Sentido da transição de página em curso. |

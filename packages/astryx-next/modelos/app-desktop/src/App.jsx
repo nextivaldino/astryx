@@ -8,7 +8,7 @@ import {
   AlertDialog, Banner, Button, Card, DropdownMenu, DropdownMenuDivider, DropdownMenuGroup, DropdownMenuItem,
   DropdownMenuRadioGroup, DropdownMenuRadioItem, Heading, Icon, StatusDot, Text, TextInput, VStack,
 } from '@astryxdesign/core';
-import { MODO_TEMA, useAparencia, useOnline } from 'astryx-next/comum';
+import { MODO_TEMA, NOME_TEMA, useAparencia, useOnline } from 'astryx-next/comum';
 import { BarraApp, BarraEstado, Estado, JanelaDefinicoes } from 'astryx-next/desktop';
 import { CartaoInfo, DockProvider, GrelhaInfo, GrupoDef, LinhaDef } from 'astryx-next/mobile';
 import { Campo, Formulario, Seccao } from 'astryx-next/formulario';
@@ -21,7 +21,6 @@ const PAGINAS = [
   { valor: 'Registos', rotulo: 'Registos', icone: 'viewColumns' },
   { valor: 'Novo registo', rotulo: 'Novo registo', icone: 'checkDouble' },
 ];
-const NOME_RAPIDO = { claro: 'Tema claro', escuro: 'Tema escuro', personalizado: 'Tema personalizado' };
 
 export default function App() {
   const aparencia = useAparencia(); // [aparencia, mudar, repor, efetiva] — do sistema, não da app
@@ -67,7 +66,7 @@ function Entrar({ onEntrar }) {
   );
 }
 
-function Principal({ sessao, aparencia: [aparencia, mudar, repor], onSair }) {
+function Principal({ sessao, aparencia: [aparencia, mudar, repor, efetiva], onSair }) {
   const online = useOnline();
   const [pagina, setPagina] = useState('Início');
   const [pesquisa, setPesquisa] = useState('');
@@ -117,6 +116,7 @@ function Principal({ sessao, aparencia: [aparencia, mudar, repor], onSair }) {
           </DropdownMenu>
         }
         subBarra={subBarra}
+        onDefinicoes={() => setDefinicoes(true)}
       />
 
       <main className="app-pagina">
@@ -137,7 +137,7 @@ function Principal({ sessao, aparencia: [aparencia, mudar, repor], onSair }) {
         fim={
           <>
             <Estado>{sessao.nome}</Estado>
-            <Estado>{NOME_RAPIDO[aparencia.rapido]}</Estado>
+            <Estado>{NOME_TEMA[efetiva.modo]}</Estado>
             <Estado icone="info">{APP.nome} {APP.versao}</Estado>
           </>
         }

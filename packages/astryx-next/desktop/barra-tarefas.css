@@ -1,0 +1,232 @@
+/*
+ * Barra de tarefas (next-desktop) — superbarra do Windows 7 na linguagem Astryx-NEXT:
+ * vidro com um fio de luz no topo, "orbe" Iniciar na cor de destaque, páginas como
+ * ícones com realce de vidro e um traço de luz na atual, tabuleiro com relógio.
+ * Só tokens do tema. O nome das páginas aparece quando a barra é larga (container query).
+ */
+[data-astryx-theme] {
+  --ds-tarefas-altura: 52px;
+  --ds-tarefas-material: color-mix(in srgb, var(--ds-barra-fundo, var(--color-background-surface)) 86%, transparent);
+}
+
+.ds-tarefas {
+  container: tarefas / inline-size;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-sizing: border-box;
+  block-size: var(--ds-tarefas-altura);
+  padding-inline: 8px 0;
+  background: var(--ds-tarefas-material);
+  color: var(--color-text-primary);
+}
+@supports (backdrop-filter: blur(1px)) {
+  .ds-tarefas { backdrop-filter: blur(18px) saturate(170%); -webkit-backdrop-filter: blur(18px) saturate(170%); }
+}
+:root[data-reduzir-efeitos] .ds-tarefas { --ds-tarefas-material: var(--ds-barra-fundo); backdrop-filter: none; }
+
+/* Em baixo: fixa no fundo da janela, com o fio de luz em cima (Aero) */
+.ds-tarefas[data-posicao='baixo'] {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 10;
+  padding-block-end: env(safe-area-inset-bottom, 0px);
+  block-size: calc(var(--ds-tarefas-altura) + env(safe-area-inset-bottom, 0px));
+  border-block-start: 1px solid var(--color-border-emphasized);
+  box-shadow: inset 0 1px 0 light-dark(rgb(255 255 255 / 70%), rgb(255 255 255 / 7%)), 0 -4px 16px light-dark(rgb(0 0 6 / 5%), rgb(0 0 0 / 25%));
+}
+/* Em cima: ocupa o lugar da barra da app (a .ds-barra já é fixa no topo) */
+.ds-tarefas[data-posicao='cima'] { box-shadow: inset 0 -1px 0 light-dark(rgb(255 255 255 / 50%), rgb(255 255 255 / 4%)); }
+
+/* ── Iniciar: a orbe ── */
+.ds-tarefas-iniciar {
+  all: unset;
+  box-sizing: border-box;
+  flex: none;
+  display: grid;
+  place-items: center;
+  inline-size: 38px;
+  block-size: 38px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: 19px;
+  cursor: pointer;
+  box-shadow: 0 0 0 1px light-dark(rgb(0 0 6 / 12%), rgb(0 0 0 / 35%)), var(--ds-vol-preenchido, none);
+  transition: box-shadow var(--mov-fechar, 150ms) ease-out, scale var(--mov-fechar, 150ms) var(--mov-suave, ease-out);
+}
+@media (hover: hover) {
+  .ds-tarefas-iniciar:hover {
+    box-shadow: 0 0 0 1px light-dark(rgb(0 0 6 / 12%), rgb(0 0 0 / 35%)), var(--ds-vol-preenchido, none),
+      0 0 0 4px var(--color-accent-muted), 0 0 16px color-mix(in srgb, var(--color-accent) 45%, transparent);
+  }
+}
+.ds-tarefas-iniciar:active { scale: 0.94; }
+.ds-tarefas-iniciar[aria-expanded='true'] { box-shadow: 0 0 0 4px var(--color-accent-muted), 0 0 18px color-mix(in srgb, var(--color-accent) 50%, transparent); }
+.ds-tarefas-iniciar:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+
+.ds-tarefas-separador { flex: none; inline-size: 1px; block-size: 26px; background: var(--color-border-emphasized); margin-inline: 2px; }
+
+/* ── Páginas fixadas ── */
+.ds-tarefas-paginas {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ds-tarefas-pagina, .ds-tarefas-botao {
+  all: unset;
+  box-sizing: border-box;
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-inline-size: 46px;
+  block-size: 40px;
+  padding-inline: 12px;
+  border-radius: var(--radius-element);
+  color: var(--color-text-secondary);
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color var(--mov-fechar, 150ms) ease-out, color var(--mov-fechar, 150ms) ease-out, box-shadow var(--mov-fechar, 150ms) ease-out;
+}
+.ds-tarefas-botao { min-inline-size: 40px; padding-inline: 10px; font-size: 19px; }
+.ds-tarefas-pagina-nome { display: none; font-size: var(--font-size-sm); font-weight: 600; white-space: nowrap; }
+@media (hover: hover) {
+  .ds-tarefas-pagina:hover, .ds-tarefas-botao:hover {
+    background: var(--color-overlay-hover);
+    box-shadow: inset 0 0 0 1px var(--color-border);
+    color: var(--color-text-primary);
+  }
+}
+.ds-tarefas-pagina:active, .ds-tarefas-botao:active { background: var(--color-overlay-pressed); }
+.ds-tarefas-pagina:focus-visible, .ds-tarefas-botao:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+.ds-tarefas-botao[aria-pressed='true'], .ds-tarefas-botao[aria-expanded='true'] { color: var(--color-text-accent); background: var(--color-accent-muted); }
+.ds-tarefas-sub svg { transition: rotate var(--mov-fechar, 150ms) var(--mov-suave, ease-out); }
+.ds-tarefas-sub[aria-expanded='true'] svg { rotate: 180deg; }
+
+/* Página atual: realce de vidro + traço de luz na cor de destaque (superbarra) */
+.ds-tarefas-pagina[aria-current='page'] {
+  color: var(--color-text-primary);
+  background: light-dark(rgb(255 255 255 / 75%), rgb(255 255 255 / 9%));
+  box-shadow: inset 0 0 0 1px var(--color-border-emphasized), inset 0 1px 0 light-dark(rgb(255 255 255 / 90%), rgb(255 255 255 / 10%)), 0 1px 2px light-dark(rgb(0 0 6 / 8%), rgb(0 0 0 / 30%));
+}
+.ds-tarefas-pagina[aria-current='page'] > svg, .ds-tarefas-pagina[aria-current='page'] > .astryx-icon { color: var(--color-text-accent); }
+.ds-tarefas-pagina::after {
+  content: '';
+  position: absolute;
+  inset-inline: 30%;
+  inset-block-end: 3px;
+  block-size: 3px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--color-accent) 70%, transparent);
+  opacity: 0;
+  scale: 0.4 1;
+  transition: opacity var(--mov-abrir, 250ms) var(--mov-suave, ease-out), scale var(--mov-abrir, 250ms) var(--mov-suave, ease-out);
+}
+.ds-tarefas[data-posicao='cima'] .ds-tarefas-pagina::after { inset-block: 3px auto; }
+.ds-tarefas-pagina[aria-current='page']::after { opacity: 1; scale: 1; }
+
+/* Barra larga: as páginas mostram o nome (como "nunca combinar" no Windows 7) */
+@container tarefas (width > 760px) {
+  .ds-tarefas-pagina-nome { display: inline; }
+  .ds-tarefas-pagina { justify-content: flex-start; min-inline-size: 132px; font-size: 18px; }
+}
+
+/* ── Tabuleiro ── */
+.ds-tarefas-tabuleiro { flex: none; display: flex; align-items: center; gap: 2px; block-size: 100%; }
+.ds-tarefas-pesquisa { display: flex; align-items: center; gap: 4px; }
+.ds-tarefas-pesquisa .astryx-text-input, .ds-tarefas-pesquisa > div:has(input) { inline-size: clamp(140px, 22cqi, 260px); }
+.ds-tarefas-selo {
+  position: absolute;
+  inset-block-start: 4px;
+  inset-inline-end: 4px;
+  min-inline-size: 16px;
+  block-size: 16px;
+  padding-inline: 4px;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--ds-adw-destructive-bg, var(--color-error));
+  color: #fff;
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1;
+}
+.ds-tarefas-relogio { display: flex; align-items: center; gap: 8px; padding-inline: 8px 10px; cursor: default; }
+.ds-tarefas-rede { inline-size: 8px; block-size: 8px; border-radius: 50%; background: var(--color-text-error); }
+.ds-tarefas-rede[data-online] { background: var(--color-success, #2ec27e); }
+.ds-tarefas-hora { display: grid; justify-items: end; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.ds-tarefas-hora strong { font-size: var(--font-size-sm); font-weight: 650; }
+.ds-tarefas-hora small { font-size: var(--font-size-2xs); color: var(--color-text-secondary); }
+/* "Mostrar ambiente de trabalho": um traço fino no fim, que leva ao início */
+.ds-tarefas-inicio {
+  all: unset;
+  align-self: stretch;
+  inline-size: 10px;
+  border-inline-start: 1px solid var(--color-border-emphasized);
+  cursor: pointer;
+}
+@media (hover: hover) { .ds-tarefas-inicio:hover { background: var(--color-overlay-hover); } }
+.ds-tarefas-inicio:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+
+/* Barra estreita: sem data, só a hora */
+@container tarefas (width < 520px) {
+  .ds-tarefas-hora small { display: none; }
+  .ds-tarefas-relogio { padding-inline: 4px 6px; }
+}
+
+/* Barra estreita: botões mais justos; ⚙ e o traço do início saem (as Definições estão no
+   Iniciar); com a pesquisa aberta, o campo fica com o lugar das páginas */
+@container tarefas (width < 560px) {
+  .ds-tarefas-pagina { min-inline-size: 40px; padding-inline: 8px; }
+  .ds-tarefas-botao { min-inline-size: 36px; padding-inline: 6px; }
+  .ds-tarefas-definicoes, .ds-tarefas-inicio { display: none; }
+  .ds-tarefas-paginas:has(+ .ds-tarefas-tabuleiro .ds-tarefas-pesquisa[data-aberta]) { display: none; }
+  .ds-tarefas-tabuleiro:has(.ds-tarefas-pesquisa[data-aberta]) { flex: 1 1 auto; min-inline-size: 0; }
+  .ds-tarefas-pesquisa[data-aberta] { flex: 1 1 auto; min-inline-size: 0; }
+  .ds-tarefas-pesquisa[data-aberta] > div:has(input) { inline-size: auto; flex: 1 1 auto; min-inline-size: 0; }
+}
+
+/* ── Lista de avisos (centro de ação) ── */
+.ds-tarefas-avisos {
+  position: fixed;
+  inset: auto;
+  inset-inline-end: 10px;
+  margin: 0;
+  inline-size: min(360px, calc(100vw - 20px));
+  max-block-size: min(480px, calc(100dvh - 120px));
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 0;
+  border-radius: var(--radius-container);
+  background: var(--color-background-popover);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-high), 0 0 0 1px var(--color-border-emphasized);
+  opacity: 1;
+  translate: 0 0;
+  transition: opacity var(--mov-abrir, 250ms) var(--mov-suave, ease-out), translate var(--mov-abrir, 250ms) var(--mov-suave, ease-out),
+    display var(--mov-abrir, 250ms) allow-discrete, overlay var(--mov-abrir, 250ms) allow-discrete;
+}
+.ds-tarefas-avisos[data-posicao='baixo'] { inset-block-end: calc(var(--ds-tarefas-altura) + 10px + env(safe-area-inset-bottom, 0px)); }
+.ds-tarefas-avisos[data-posicao='cima'] { inset-block-start: calc(var(--ds-tarefas-altura) + 10px); }
+.ds-tarefas-avisos:not(:popover-open) { opacity: 0; translate: 0 var(--mov-distancia, 8px); }
+.ds-tarefas-avisos[data-posicao='cima']:not(:popover-open) { translate: 0 calc(-1 * var(--mov-distancia, 8px)); }
+@starting-style { .ds-tarefas-avisos:popover-open { opacity: 0; translate: 0 var(--mov-distancia, 8px); } }
+.ds-tarefas-avisos::backdrop { background: transparent; }
+.ds-tarefas-avisos-topo { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 4px 8px 8px; }
+.ds-tarefas-avisos-topo small { font-size: var(--font-size-2xs); color: var(--color-text-secondary); }
+.ds-tarefas-avisos-vazio { margin: 0; padding: 8px 8px 12px; color: var(--color-text-secondary); }
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-tarefas-iniciar, .ds-tarefas-pagina, .ds-tarefas-botao, .ds-tarefas-pagina::after, .ds-tarefas-avisos, .ds-tarefas-sub svg { transition: none; }
+}

@@ -173,6 +173,25 @@
 /* a amostra de textura usa um passo pequeno; na miniatura fica igual ao real em escala */
 .ds-mini-area[data-amostra^='textura-'] { --tx-passo: 12px; --tx-l: color-mix(in srgb, var(--color-text-primary) 10%, transparent); --tx-forte: color-mix(in srgb, var(--color-text-primary) 22%, transparent); }
 
+/* Miniatura da barra de tarefas */
+.ds-mini-tarefas { grid-template-rows: 22px 1fr; }
+.ds-mini-tarefas[data-posicao='baixo'] { grid-template-rows: 1fr 22px; }
+.ds-mini-tarefas[data-posicao='baixo'] .ds-mini-tarefas-barra { order: 2; border-block: 1px solid var(--color-border-emphasized) 0; }
+.ds-mini-tarefas-barra {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding-inline: 6px;
+  background: var(--color-background-surface);
+  border-block-end: 1px solid var(--color-border-emphasized);
+}
+.ds-mini-tarefas-barra b { inline-size: 13px; block-size: 13px; border-radius: 50%; background: var(--color-accent); }
+.ds-mini-tarefas-barra em { inline-size: 18px; block-size: 13px; border-radius: 4px; background: var(--color-accent-muted); box-shadow: inset 0 -2px 0 var(--color-accent); }
+.ds-mini-tarefas-barra i { inline-size: 18px; block-size: 13px; border-radius: 4px; background: var(--color-border); }
+.ds-mini-tarefas-barra span { flex: 1; }
+.ds-mini-tarefas-barra u { inline-size: 26px; block-size: 6px; border-radius: 3px; background: var(--color-border-emphasized); }
+.ds-mini-area { transition: none; }
+
 /* ── Ecrã estreito (web no telemóvel/tablet): a janela ocupa o ecrã; o lado vira uma faixa ── */
 @media (width <= 720px) {
   .ds-janela {

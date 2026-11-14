@@ -150,9 +150,6 @@
 .ds-barra-menu-cabecalho > span:last-child { display: grid; line-height: 1.25; }
 .ds-barra-menu-cabecalho small { color: var(--color-text-secondary); font-size: var(--font-size-xs); }
 
-/* ── Barra do fundo (só telemóvel) ── */
-.ds-barra-fundo { display: none; }
-
 /* ── Tablet: < 1024px ── */
 @media (width < 1024px) {
   /* Abas estreitas: ícone por cima do nome, letra mais pequena (GNOME) */
@@ -168,44 +165,17 @@
   .ds-barra-pesquisa-botao { display: inline-flex; }
 }
 
-/* ── Telemóvel: < 640px ── */
+/* ── Modo barra de tarefas (BarraTarefas.jsx) ── */
+/* em baixo: em cima fica só uma linha fina com o ícone e o título da página */
+.ds-barra-principal[data-min] { min-block-size: 44px; padding-inline: 12px; gap: 10px; }
+.ds-barra-principal[data-min] .ds-barra-titulo { flex: 1 1 auto; border: 0; padding: 0; }
+/* em cima: a barra de tarefas é a própria barra; o separador vem dela */
+.ds-barra[data-tarefas='cima'] { border-block-end-color: var(--color-border-emphasized); }
+
+/* o conteúdo não fica por baixo da barra de tarefas (nem da barra de estado, que sobe para cima dela) */
+:root[data-tarefas='baixo'] body { padding-block-end: calc(var(--ds-tarefas-altura, 52px) + var(--ds-estado-altura, 28px) + env(safe-area-inset-bottom, 0px)); }
+:root[data-tarefas='baixo'] .ds-estado { inset-block-end: calc(var(--ds-tarefas-altura, 52px) + env(safe-area-inset-bottom, 0px)); }
+/* janela muito estreita: o relógio e o estado da ligação já estão no tabuleiro */
 @media (width < 640px) {
-  .ds-barra-abas { display: none; }
-  .ds-barra-titulo {
-    flex: 1 1 auto;
-    text-align: center;
-    border: 0;
-    padding: 0;
-  }
-  .ds-barra-fundo {
-    position: fixed;
-    inset-inline: 0;
-    inset-block-end: 0;
-    z-index: 10;
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 1fr;
-    padding: 4px 6px calc(4px + env(safe-area-inset-bottom, 0px));
-    background: var(--ds-barra-fundo);
-    border-block-start: 1px solid var(--ds-barra-separador);
-  }
-  .ds-barra-fundo-item {
-    all: unset;
-    display: grid;
-    justify-items: center;
-    gap: 2px;
-    padding: 6px 4px;
-    border-radius: var(--radius-element);
-    font-size: var(--font-size-2xs);
-    font-weight: 600;
-    color: var(--color-text-secondary);
-    cursor: pointer;
-  }
-  .ds-barra-fundo-item[aria-current='page'] {
-    color: var(--color-text-primary);
-    background: var(--color-overlay-pressed);
-  }
-  .ds-barra-fundo-item:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
-  /* espaço para a barra do fundo não tapar o conteúdo */
-  body { padding-block-end: 64px; }
+  :root[data-tarefas='baixo'] body { padding-block-end: calc(var(--ds-tarefas-altura, 52px) + env(safe-area-inset-bottom, 0px)); }
 }
