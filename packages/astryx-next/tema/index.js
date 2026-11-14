@@ -16,4 +16,5 @@ import './fechar.css';
 import './textura.css';
 import './toque.css';
 import './aparencia.css';
+import './mobile.css'; // depois da aparência: a densidade em escala de toque
 import './menus.js';

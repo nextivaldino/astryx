@@ -32,6 +32,10 @@ muda logo, sem animar. Princípios inspirados em [transitions.dev](https://trans
 páginas, e "avisos no fundo" (o fundo ganha a cor do aviso ativo). Tudo em Definições → Aparência. O "início" é a
 1.ª página da Dock/BarraApp; numa app sem elas, marca-o com `document.documentElement.toggleAttribute('data-no-inicio', true)`.
 
+**Mobile mais suave:** em ecrãs de toque e até 640px, o mesmo sistema ganha cantos mais redondos, letra de 16px,
+controlos de 44px, superfícies sem contorno e campos preenchidos (`tema/mobile.css`). O desktop não muda — as duas
+versões são a mesma família.
+
 O registo de todas as mudanças está em [`ALTERACOES.md`](../../ALTERACOES.md), na raiz do fork.
 
 ---

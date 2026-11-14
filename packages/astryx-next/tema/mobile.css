@@ -1,0 +1,66 @@
+/*
+ * Mobile — a mesma linguagem do desktop, mais suave e pronta para o toque.
+ *
+ * Aplica-se a ecrãs de toque e a ecrãs estreitos (≤ 640px). No desktop e no
+ * Electron nada muda. Só se mexe em PROPORÇÕES e MATERIAIS: as cores, a letra,
+ * os componentes e o movimento são os mesmos — por isso as duas versões
+ * continuam a parecer a mesma família (como as apps adaptativas do GNOME).
+ *
+ *   cantos       7.5 → 12px nos elementos, 12 → 18px nas caixas
+ *   letra        corpo 14–15 → 16px; secundário 13.5 → 15px; notas 12.5 → 13.5px
+ *   controlos    28/32/36 → 36/44/48px de altura (alvos de toque reais)
+ *   superfícies  sem contorno: assentam numa sombra larga e muito leve
+ *   campos       preenchidos (sem caixa à volta); o foco desenha o anel de destaque
+ *   volume       relevo dos botões mais discreto
+ *
+ * As regras de componentes levam :root à frente para ganharem às dos próprios
+ * componentes, que carregam depois do tema.
+ */
+@media (pointer: coarse), (width <= 640px) {
+  [data-astryx-theme] {
+    --ds-raio-base: 12px;
+    --radius-container: 18px;
+
+    --ds-t-titulo-3: 18px;
+    --ds-t-corpo: 16px;
+    --ds-t-corpo-sm: 15px;
+    --ds-t-meta: 13.5px;
+    --ds-t-legenda: 12px;
+
+    --size-element-sm: 36px;
+    --size-element-md: 44px;
+    --size-element-lg: 48px;
+
+    --color-border: light-dark(rgb(0 0 6 / 5%), rgb(255 255 255 / 6%));
+    --ds-botao-volume: inset 0 1px 0 rgb(255 255 255 / 14%), inset 0 -1px 0 rgb(0 0 6 / 6%);
+    --ds-botao-contorno: 0 0 0 1px light-dark(rgb(0 0 6 / 6%), rgb(255 255 255 / 6%));
+
+    /* superfície suave: sombra larga e leve; no escuro um fio de luz (a sombra não se vê) */
+    --ds-superficie:
+      0 1px 2px light-dark(rgb(0 0 6 / 3%), rgb(0 0 0 / 22%)),
+      0 6px 20px light-dark(rgb(0 0 6 / 5%), rgb(0 0 0 / 20%)),
+      inset 0 0 0 1px light-dark(transparent, rgb(255 255 255 / 6%));
+    /* campo preenchido */
+    --ds-campo: light-dark(rgb(0 0 6 / 4.5%), rgb(255 255 255 / 6%));
+  }
+  /* A densidade continua a mandar, numa escala de toque */
+  :root[data-densidade='compacta'], :root[data-densidade='compacta'] [data-astryx-theme] {
+    --size-element-sm: 32px; --size-element-md: 40px; --size-element-lg: 44px;
+  }
+  :root[data-densidade='confortavel'], :root[data-densidade='confortavel'] [data-astryx-theme] {
+    --size-element-sm: 40px; --size-element-md: 48px; --size-element-lg: 52px;
+  }
+
+  /* ── Superfícies sem contorno ── */
+  :root :is(.nm-def-caixa, .nf-progresso) { box-shadow: var(--ds-superficie); }
+  :root .nm-info { box-shadow: none; padding: 18px; }
+  :root .nm-def-caixa > * + * { border-block-start-color: var(--color-border); }
+
+  /* ── Campos preenchidos (formulário inteligente) ── */
+  :root .nf-entrada { background: var(--ds-campo); box-shadow: none; }
+  :root .nf-entrada:focus { background: var(--color-background-surface); box-shadow: inset 0 0 0 2px var(--color-accent), 0 0 0 4px var(--color-accent-muted); }
+  :root .nf-campo[data-erro] .nf-entrada { box-shadow: inset 0 0 0 2px var(--color-text-error); }
+
+  /* ── Mais ar entre blocos ── */
+  :root .nm-colunas { --nm-intervalo: 24px; }
+}

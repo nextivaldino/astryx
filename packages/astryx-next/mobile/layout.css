@@ -16,7 +16,7 @@
   max-inline-size: 1280px;
   margin-inline: auto;
 }
-.nm-colunas > * {
+.nm-colunas.nm-colunas > * { /* dupla classe: ganha à margem 0 dos próprios blocos (ex.: GrupoDef) */
   break-inside: avoid;
   margin-block: 0 var(--nm-intervalo);
 }

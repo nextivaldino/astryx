@@ -28,6 +28,24 @@ Inspiração: **GNOME HIG / libadwaita** (paleta Adwaita, barras, listas em caix
 
 ---
 
+## 0.1.0-beta.6 — 14/11/2026 · mobile mais suave
+
+A versão mobile fica mais suave e pronta para o toque, **sem deixar de ser a mesma família do desktop**: muda só
+proporções e materiais; cores, letra, componentes e movimento são os mesmos. Aplica-se a ecrãs de toque e a ecrãs
+até 640px (`tema/mobile.css`). No desktop e no Electron nada muda.
+
+| O que mudou | Porquê | Tipo | Impacto | Quebra? |
+|---|---|---|---|---|
+| Cantos: elementos 7.5 → 12px, caixas 12 → 18px | Formas mais suaves, à medida do dedo | tema | mobile · tablet | não |
+| Letra: corpo 14–15 → 16px, secundário 13.5 → 15px, notas 12.5 → 13.5px, legendas 11 → 12px, título 3 17 → 18px | Ler sem esforço no telemóvel | tema | mobile · tablet | não |
+| Controlos: alturas 28/32/36 → 36/44/48px (compacta 32/40/44 · confortável 40/48/52) | Alvos de toque reais, não só invisíveis | tema | mobile · tablet | não |
+| Superfícies (listas em caixa, progresso do formulário) sem contorno, numa sombra larga e leve; cartões pastel sem contorno e com mais espaço | Menos linhas, aspeto mais limpo | tema | mobile · tablet | não |
+| Campos do formulário preenchidos (sem caixa à volta); o foco desenha o anel de destaque | Mais leve e mais "mobile" | tema | mobile · tablet | não |
+| Relevo e contorno dos botões mais discretos; contornos gerais 7% → 5% | Suavizar sem perder a identidade | tema | mobile · tablet | não |
+| `.nm-colunas`: o espaço entre blocos já não é anulado pela margem dos próprios blocos; 24px no telemóvel | Corrige a nota de uma lista colada ao título seguinte | código-fonte | todos | não |
+
+---
+
 ## 0.1.0-beta.5 — 14/11/2026 · padrão do fundo
 
 Padrões finos para o fundo, sem degradês, escolhidos em **Definições → Aparência → Padrão do fundo**.
